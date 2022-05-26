@@ -1,0 +1,35 @@
+{
+  "name": "nifty-backend-express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest --testRunner=jest-circus/runner tests/Nifty.test.js",
+    "start": "node server.js",
+    "deploy:dev": "heroku git:remote -a nifty-dev && git push heroku development:main",
+    "deploy:prod": "heroku git:remote -a nifty && git push heroku main:main"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "ethers": "^5.6.8",
+    "express": "^4.18.1",
+    "express-validator": "^6.14.1",
+    "helmet": "^5.1.0",
+    "mongoose": "^6.3.4",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.16"
+  },
+  "devDependencies": {
+    "jest": "^28.1.0",
+    "request": "^2.88.2",
+    "supertest": "^6.2.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "verbose": true
+  }
+}
