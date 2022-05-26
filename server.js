@@ -11,10 +11,10 @@ const connectDB = require("./config/db");
 // Routes Import
 // ----------------------------------
 
-const campaignRouter = require("./routes/Campaign");
 const userRouter = require("./routes/User");
-const rewardRouter = require("./routes/Reward");
-const merchantRouter = require("./routes/Merchant");
+// const campaignRouter = require("./routes/Campaign");
+// const rewardRouter = require("./routes/Reward");
+// const merchantRouter = require("./routes/Merchant");
 
 // ----------------------------------
 // Express configuration
@@ -42,10 +42,10 @@ app.use(helmet());
 // API Routes
 // ----------------------------------
 
-app.use("/api/v1/campaign", campaignRouter);
 app.use("/api/v1/user", userRouter);
-app.use("/api/v1/reward", rewardRouter);
-app.use("/api/v1/merchant", merchantRouter);
+// app.use("/api/v1/campaign", campaignRouter);
+// app.use("/api/v1/reward", rewardRouter);
+// app.use("/api/v1/merchant", merchantRouter);
 
 // ----------------------------------
 // Express server
