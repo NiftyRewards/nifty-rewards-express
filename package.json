@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "jest --testRunner=jest-circus/runner tests/Nifty.test.js",
+    "test:user": "jest --testRunner=jest-circus/runner tests/user.test.js",
     "start": "node server.js",
     "deploy:dev": "heroku git:remote -a nifty-dev && git push heroku development:main",
     "deploy:prod": "heroku git:remote -a nifty && git push heroku main:main"
