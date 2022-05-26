@@ -6,5 +6,4 @@ const userSchema = new mongoose.Schema({
   account_type: { type: String, default: "basic" },
 });
 
-const User = mongoose.models.User || mongoose.model("User", userSchema);
-export default User;
+module.exports = mongoose.model("User", userSchema);

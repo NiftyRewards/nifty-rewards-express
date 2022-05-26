@@ -5,6 +5,4 @@ const collectionsSchema = new mongoose.Schema({
   collection_name: { type: String, required: true },
 });
 
-const Collection =
-  mongoose.models.Collection || mongoose.model("Collection", collectionsSchema);
-export default Collection;
+module.exports = mongoose.model("Collection", collectionsSchema);

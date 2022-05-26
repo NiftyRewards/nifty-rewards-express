@@ -9,6 +9,4 @@ const rewardsSchema = new mongoose.Schema({
   quantity_used: { type: Number, required: true },
 });
 
-const Reward =
-  mongoose.models.Reward || mongoose.model("Reward", rewardsSchema);
-export default Reward;
+module.exports = mongoose.model("Reward", rewardsSchema);
