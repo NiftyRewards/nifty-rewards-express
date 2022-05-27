@@ -8,11 +8,13 @@ const {
   editCampaign,
   getCampaign,
   approveCampaign,
+  getEligibleCampaigns,
 } = require("../controllers/Campaign");
 
 router.route("/start").post(startCampaign);
 router.route("/:campaignId").get(getCampaign);
 router.route("/:campaignId/edit").put(editCampaign);
 router.route("/approve").put(approveCampaign);
+router.route("/eligible").put(getEligibleCampaigns);
 
 module.exports = router;

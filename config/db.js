@@ -4,7 +4,9 @@ require("dotenv").config();
 let MONGODB_URI;
 const DB_DOMAIN_PROD = process.env.DB_DOMAIN_PROD;
 const DB_DOMAIN_DEV = process.env.DB_DOMAIN_DEV;
-const DATABASE_NAME = process.env.DATABASE_NAME;
+const DATABASE_NAME = process.env.DATABASE_NAME
+  ? process.env.DATABASE_NAME
+  : "NiftyRewards";
 const DB_USERNAME = process.env.DB_USERNAME;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 
