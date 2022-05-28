@@ -6,6 +6,10 @@
   "scripts": {
     "test": "jest --testRunner=jest-circus/runner tests/Nifty.test.js",
     "test:user": "jest --testRunner=jest-circus/runner tests/user.test.js",
+    "test:campaign": "jest --testRunner=jest-circus/runner tests/campaign.test.js",
+    "test:merchant": "jest --testRunner=jest-circus/runner tests/merchant.test.js",
+    "test:reward": "jest --testRunner=jest-circus/runner tests/reward.test.js",
+    "test:collection": "jest --testRunner=jest-circus/runner tests/collection.test.js",
     "start": "node server.js",
     "deploy:dev": "heroku git:remote -a nifty-dev && git push heroku development:main",
     "deploy:prod": "heroku git:remote -a nifty && git push heroku main:main"
