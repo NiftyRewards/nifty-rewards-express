@@ -21,7 +21,6 @@ async function getNFTSfromTATUM(chain, address) {
   const resp = await axios.get(
     `https://api-us-west1.tatum.io/v3/nft/address/balance/${chain}/${address}`,
     {
-      method: "GET",
       headers: {
         "x-api-key": TATUM_API_KEY,
       },
@@ -154,6 +153,7 @@ exports.refreshNfts = async (req, res, next) => {
     console.log("🚀 | exports.refreshNfts= | data", data);
     data.map((collection) => {
       collection.chain = bounded_address.chain;
+      collection.contractIdentifier = `${bounded_address.chain}-${collection.contractAddress}`;
     });
     console.log("🚀 | data.map | data", data);
 
@@ -162,7 +162,10 @@ exports.refreshNfts = async (req, res, next) => {
   }
 
   // Cache data from TATUM to User Collection
-  await User.findOneAndUpdate({ address }, { nfts_cache: totalData });
+  await User.findOneAndUpdate(
+    { address },
+    { nfts_cache: totalData, cache_last_updated: Date.now() }
+  );
 
   return res.status(200).json({
     message: "NFTS refreshed",
