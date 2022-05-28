@@ -1,7 +1,7 @@
 const request = require("supertest");
 const app = require("../server");
 const ethers = require("ethers");
-const User = require("../models/Users.model");
+const UserModel = require("../models/Users.model");
 const mongoose = require("mongoose");
 
 require("dotenv").config();
@@ -11,7 +11,7 @@ jest.setTimeout(30000);
 describe("User", () => {
   beforeAll(async () => {
     // Remove all data that was added during tests
-    await User.deleteMany({});
+    await UserModel.deleteMany({});
   });
 
   afterAll(async () => {
