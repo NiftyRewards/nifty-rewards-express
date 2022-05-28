@@ -11,5 +11,11 @@ exports.getRewards = async (req, res, next) => {
       message: "Invalid address",
     });
   }
+
+  // Find Rewards with campaign_id and address
+  let rewards = await Reward.find({
+    campaign_id: campaign_id,
+    collection_address: address,
+  });
 };
 exports.redeemReward = async (req, res, next) => {};
