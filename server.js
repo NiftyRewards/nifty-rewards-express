@@ -12,6 +12,7 @@ const connectDB = require("./config/db");
 // ----------------------------------
 
 const userRouter = require("./routes/User");
+const collectionRoute = require("./routes/Collection");
 // const campaignRouter = require("./routes/Campaign");
 // const rewardRouter = require("./routes/Reward");
 // const merchantRouter = require("./routes/Merchant");
@@ -43,6 +44,7 @@ app.use(helmet());
 // ----------------------------------
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/collection", collectionRoute);
 // app.use("/api/v1/campaign", campaignRouter);
 // app.use("/api/v1/reward", rewardRouter);
 // app.use("/api/v1/merchant", merchantRouter);
