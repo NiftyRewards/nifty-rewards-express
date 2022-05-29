@@ -76,8 +76,9 @@ exports.startCampaign = async (req, res, next) => {
   }
   console.log(`${chainId}-${collectionAddress}`);
   // Check if collection exists
+  let collectionIdentifier = `${chainId}-${collectionAddress}`;
   let collection = await Collection.findOne({
-    collectionIdentifier: `${chainId}-${collectionAddress}`,
+    collectionIdentifier: collectionIdentifier,
   });
   if (!collection) {
     return res.status(400).json({
@@ -95,6 +96,11 @@ exports.startCampaign = async (req, res, next) => {
       description: description,
       start_date: startDate,
       end_date: endDate,
+    });
+
+    // Add Campaign to Merchant
+    await Merchant.findByIdAndUpdate(merchant._id, {
+      $push: { campaigns: campaign._id },
     });
   } catch (err) {
     console.log(err);
@@ -120,6 +126,9 @@ exports.startCampaign = async (req, res, next) => {
     tokenIds = tokenIds.map((tokenId) => {
       return {
         campaign_id: campaign._id,
+        collectionIdentifier: collectionIdentifier,
+        collection_address: collectionAddress,
+        chain: chainId,
         token_id: tokenId,
         quantity: redemptionCount,
       };

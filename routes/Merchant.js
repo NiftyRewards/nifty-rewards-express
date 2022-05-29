@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  // getMerchants,
-  // getMerchant,
+  getMerchants,
+  getMerchant,
   createMerchant,
-  // verifyMerchant,
-  // editMerchant,
+  verifyMerchant,
+  editMerchant,
 } = require("../controllers/Merchant");
 
 // router.route("/").get(getMerchants);
