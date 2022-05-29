@@ -13,7 +13,7 @@ const MERCHANT_ADDRESS = "0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7";
 describe("Campaign", () => {
   beforeAll(async () => {
     // Remove all data that was added during tests
-    await CollectionModel.deleteMany({});
+    // await CollectionModel.deleteMany({});
   });
 
   afterAll(async () => {
