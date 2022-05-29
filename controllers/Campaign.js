@@ -14,10 +14,6 @@ function getCollectionIdentifiers(nfts_cache) {
   let collectionIdentifiers = nfts_cache.map((collection) => {
     return collection.collectionIdentifier;
   });
-  console.log(
-    "🚀 | collectionIdentifiers | collectionIdentifiers",
-    collectionIdentifiers
-  );
   return collectionIdentifiers;
 }
 
@@ -46,20 +42,12 @@ exports.startCampaign = async (req, res, next) => {
     affectedTokens,
     redemptionCount,
   } = req.body;
-  console.log("🚀 | exports.startCampaign= | req.body", req.body);
-  console.log(
-    "🚀 | exports.startCampaign= | collectionAddress",
-    collectionAddress
-  );
-  console.log("🚀 | exports.startCampaign= | merchantAddress", merchantAddress);
 
   // Check if valid address
   try {
     merchantAddress = ethers.utils.getAddress(merchantAddress);
     collectionAddress = ethers.utils.getAddress(collectionAddress);
   } catch (error) {
-    console.log("🚀 | exports.startCampaign= | error", error);
-
     return res.status(400).json({
       message: "Invalid address",
     });
@@ -74,7 +62,6 @@ exports.startCampaign = async (req, res, next) => {
       message: "Merchant not verified",
     });
   }
-  console.log(`${chainId}-${collectionAddress}`);
   // Check if collection exists
   let collectionIdentifier = `${chainId}-${collectionAddress}`;
   let collection = await Collection.findOne({
@@ -103,7 +90,6 @@ exports.startCampaign = async (req, res, next) => {
       $push: { campaigns: campaign._id },
     });
   } catch (err) {
-    console.log(err);
     return res.status(400).json({
       message: "Error Creating Campaign",
     });
@@ -133,11 +119,9 @@ exports.startCampaign = async (req, res, next) => {
         quantity: redemptionCount,
       };
     });
-    console.log("🚀 | tokenIds.map | tokenIds", tokenIds);
 
     let rewards = await Reward.create(tokenIds);
   } catch (error) {
-    console.log("🚀 | exports.startCampaign= | error", error);
     return res.status(400).json({
       message: "Invalid reward data",
       error: error,
@@ -148,9 +132,21 @@ exports.startCampaign = async (req, res, next) => {
     message: "Campaign started",
   });
 };
-exports.editCampaign = async (req, res, next) => {};
-exports.getCampaign = async (req, res, next) => {};
-exports.approveCampaign = async (req, res, next) => {};
+exports.editCampaign = async (req, res, next) => {
+  return res.status(501).json({
+    message: "Not Implemented",
+  });
+};
+exports.getCampaign = async (req, res, next) => {
+  return res.status(501).json({
+    message: "Not Implemented",
+  });
+};
+exports.approveCampaign = async (req, res, next) => {
+  return res.status(501).json({
+    message: "Not Implemented",
+  });
+};
 
 /**
  * @description Get Eligible Campaigns based on user's address
@@ -181,7 +177,6 @@ exports.getEligibleCampaigns = async (req, res, next) => {
     },
     { __v: 0 }
   );
-  console.log("🚀 | exports.getEligibleCampaigns= | campaigns", campaigns);
 
   if (!campaigns) {
     return res.status(200).json({
@@ -195,4 +190,25 @@ exports.getEligibleCampaigns = async (req, res, next) => {
     data: campaigns,
   });
 };
-exports.getAllCampaigns = async (req, res, next) => {};
+
+/**
+ * @description Get all campaigns in database
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+exports.getAllCampaigns = async (req, res, next) => {
+  let campaigns = await Campaign.find({}, { __v: 0 });
+
+  if (!campaigns) {
+    return res.status(200).json({
+      message: "No Campaigns",
+      data: {},
+    });
+  }
+
+  return res.status(200).json({
+    message: "Campaigns Retrieved",
+    data: campaigns,
+  });
+};
