@@ -60,21 +60,26 @@ describe("Campaign", () => {
     expect(response._body.message).toEqual("Campaigns Retrieved");
   });
 
-  // test("Get Campaign", async () => {
-  //   const response = await request(app).get(`/api/v1/campaign/${CAMPAIGN_ID}`);
+  test("Get Campaigns by Merchant Id", async () => {
+    const MERCHANT_ID = "629325c7152f41547aaab5fa";
 
-  //   expect(response.status).toEqual(200);
-  //   expect(response.body.data.message).toEqual("TODO");
-  // });
+    const response = await request(app).get(
+      `/api/v1/campaign?campaignId=${MERCHANT_ID}`
+    );
+    console.log("🚀 | test | response", response._body);
 
-  // test("Get Invalid Campaign", async () => {
-  //   const response = await request(app).get(
-  //     `/api/v1/campaign/${CAMPAIGN_ID_ERROR}`
-  //   );
+    expect(response.status).toEqual(200);
+    expect(response._body.message).toEqual("Campaigns Retrieved");
+  });
 
-  //   expect(response.status).toEqual(400);
-  //   expect(response.body.data.message).toEqual("TODO");
-  // });
+  test("Get Invalid Campaign", async () => {
+    const response = await request(app).get(
+      `/api/v1/campaign/${CAMPAIGN_ID_ERROR}`
+    );
+
+    expect(response.status).toEqual(400);
+    expect(response._body.message).toEqual("Invalid Request");
+  });
 
   // test("Edit Campaign", async () => {
   //   const response = await request(app)

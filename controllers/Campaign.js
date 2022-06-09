@@ -137,11 +137,11 @@ exports.editCampaign = async (req, res, next) => {
     message: "Not Implemented",
   });
 };
-exports.getCampaign = async (req, res, next) => {
-  return res.status(501).json({
-    message: "Not Implemented",
-  });
-};
+// exports.getCampaign = async (req, res, next) => {
+//   return res.status(501).json({
+//     message: "Not Implemented",
+//   });
+// };
 exports.approveCampaign = async (req, res, next) => {
   return res.status(501).json({
     message: "Not Implemented",
@@ -197,8 +197,23 @@ exports.getEligibleCampaigns = async (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-exports.getAllCampaigns = async (req, res, next) => {
-  let campaigns = await Campaign.find({}, { __v: 0 });
+exports.getCampaign = async (req, res, next) => {
+  let { campaignId } = req.query;
+  let campaigns;
+
+  try {
+    if (campaignId) {
+      campaigns = await Campaign.findById(campaignId, { __v: 0 });
+    } else {
+      campaigns = await Campaign.find({}, { __v: 0 });
+    }
+  } catch (error) {
+    console.log("🚀 | exports.getCampaign= | error", error);
+    return res.status(400).json({
+      message: "Invalid Request",
+      error: error,
+    });
+  }
 
   if (!campaigns) {
     return res.status(200).json({
