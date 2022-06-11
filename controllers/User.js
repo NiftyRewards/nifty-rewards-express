@@ -53,7 +53,6 @@ async function getNFTSfromTATUM(chain, address) {
  * {
  *   "message": "Unauthorized"
  * }
- * @returns
  */
 exports.bindAddress = async (req, res, next) => {
   let { address, addressToBind, chain, message, signature } = req.body;
@@ -138,7 +137,7 @@ exports.getNfts = async (req, res, next) => {
 
   return res.status(200).json({
     message: "NFTS Retrieved",
-    nfts: user.nfts_cache,
+    nfts: user.nftsCache,
   });
 };
 
@@ -164,15 +163,15 @@ exports.refreshNfts = async (req, res, next) => {
 
   const chain = "ETH";
   let totalData = [];
-  for (let bounded_address of query.boundedAddresses) {
+  for (let boundedAddress of query.boundedAddresses) {
     let data = await getNFTSfromTATUM(
-      bounded_address.chain,
-      bounded_address.address
+      boundedAddress.chain,
+      boundedAddress.address
     );
     console.log("🚀 | exports.refreshNfts= | data", data);
     data.map((collection) => {
-      collection.chain = bounded_address.chain;
-      collection.contractIdentifier = `${bounded_address.chain}-${collection.contractAddress}`;
+      collection.chain = boundedAddress.chain;
+      collection.contractIdentifier = `${boundedAddress.chain}-${collection.contractAddress}`;
     });
     console.log("🚀 | data.map | data", data);
 
@@ -183,7 +182,7 @@ exports.refreshNfts = async (req, res, next) => {
   // Cache data from TATUM to User Collection
   await User.findOneAndUpdate(
     { address },
-    { nfts_cache: totalData, cache_last_updated: Date.now() }
+    { nftsCache: totalData, cacheLastUpdate: Date.now() }
   );
 
   return res.status(200).json({
