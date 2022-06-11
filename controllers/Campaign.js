@@ -18,17 +18,22 @@ function getCollectionIdentifiers(nfts_cache) {
 }
 
 /**
+ * POST /api/v1/campaign/start
+ * @summary Start a new campaign
+ * @tags Campaign
  * @description Start a new campaign
  * when Campaign is started rewards are generated as well
- * @param {*} merchantAddress Address of the Merchant
- * @param {*} collectionAddress Address of the Collection
- * @param {*} chain Chain Id
- * @param {*} title Title of Campaign
- * @param {*} description Description of Campaign
- * @param {*} startDate Start Date of Campaign
- * @param {*} endDate End Date of Campaign
- * @param {*} tokenIds Token Ids eligible for campaign
- * @param {*} redemptionCount Number of times a reward can be redeemed
+ * @param {string} merchantAddress.required - Address of the Merchant
+ * @param {string} collectionAddress.required - Address of the Collection
+ * @param {string} chain.required - Chain Id
+ * @param {string} title.required - Title of Campaign
+ * @param {string} description.required - Description of Campaign
+ * @param {string} startDate.required - Start Date of Campaign
+ * @param {string} endDate.required - End Date of Campaign
+ * @param {[string]} tokenIdsrequired - Token Ids eligible for campaign
+ * @param {string} redemptionCount.required - Number of times a reward can be redeemed
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
  */
 exports.startCampaign = async (req, res, next) => {
   let {
@@ -132,6 +137,14 @@ exports.startCampaign = async (req, res, next) => {
     message: "Campaign started",
   });
 };
+
+/**
+ * PUT /api/v1/campaign/edit
+ * @summary Edit an existing campaign
+ * @tags Campaign
+ * @description Edit an existing campaign
+ * @return {object} 501 - Not Implemented
+ */
 exports.editCampaign = async (req, res, next) => {
   return res.status(501).json({
     message: "Not Implemented",

@@ -1,7 +1,16 @@
 const mongoose = require("mongoose");
 
+/**
+ * Merchant
+ * @typedef {object} Merchant
+ * @property {string} address.required - Wallet address of the merchant
+ * @property {string} name.required - Name of the merchant
+ * @property {string} description.required - Description of the merchant
+ * @property {string} verified - If the merchant is verified
+ * @property {[string]} campaigns - List of campaigns by the merchant
+ */
 const merchantsSchema = new mongoose.Schema({
-  merchant_address: { type: String, required: true },
+  address: { type: String, required: true },
   name: { type: String, required: true, default: "Merchant" },
   description: { type: String },
   verified: { type: Boolean, default: true },

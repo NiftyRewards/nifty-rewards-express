@@ -30,61 +30,80 @@ async function getNFTSfromTATUM(chain, address) {
 }
 
 /**
- * @description Binds an address to user
+ * POST /api/v1/user/bind
+ * @summary Binds an external address to the user
+ * @tags User
+ * @description Generates a signature and binds an external address to the user
+ * @param {string} address.required - Current Address
+ * @param {string} addressToBind.required - Address to Bind
+ * @param {string} chain.required - Chain Id
+ * @param {string} message.required - Message to sign
+ * @param {string} signature.required - Signature of the message
+ * @return {object} 200 - User successfully binded - application/json
+ * @example response - 200 - Successful Bind
+ * {
+ *   "message": "Address 0x0000000000000000000000000000000000000000 binded to 0x1111111111111111111111111111111111111111"
+ * }
+ * @return {object} 400 - Bad request response
+ * @example response - 400 - Invalid Address
+ * {
+ *   "message": "Invalid address"
+ * }
+ * @example response - 400 - Invalid Signature
+ * {
+ *   "message": "Unauthorized"
+ * }
  * @returns
  */
 exports.bindAddress = async (req, res, next) => {
-  let { address, address_to_bind, address_to_bind_chain, message, signature } =
-    req.body;
+  let { address, addressToBind, chain, message, signature } = req.body;
 
   // Check if valid address
   try {
     address = ethers.utils.getAddress(address);
-    address_to_bind = ethers.utils.getAddress(address_to_bind);
+    addressToBind = ethers.utils.getAddress(addressToBind);
   } catch {
     return res.status(400).json({
       message: "Invalid address",
     });
   }
 
-  // Verify if caller is owner of address_to_bind using signature
-  if (!verifySignature(message, signature, address_to_bind)) {
+  // Verify if caller is owner of addressToBind using signature
+  if (!verifySignature(message, signature, addressToBind)) {
     return res.status(401).json({
       message: "Unauthorized",
     });
   }
 
-  // Verify if address_to_bind is not already binded to another address
+  // Verify if addressToBind is not already binded to another address
   let user = await User.findOne({ address: address });
 
   if (!user) {
     let update = await User.create({
       address: address,
-      bounded_addresses: [
-        { address: address_to_bind, chain: address_to_bind_chain },
-      ],
+      boundedAddresses: [{ address: addressToBind, chain: chain }],
     });
   } else {
     if (
-      user.bounded_addresses.includes({
-        address: address_to_bind,
-        chain: address_to_bind_chain,
+      user.boundedAddresses.includes({
+        address: addressToBind,
+        chain: chain,
       })
     ) {
       return res.status(400).json({
         message: "Address already binded",
       });
     } else {
-      user.bounded_addresses.push({
-        address: address_to_bind,
-        chain: address_to_bind_chain,
+      user.boundedAddresses.push({
+        address: addressToBind,
+        chain: chain,
       });
       await user.save();
     }
   }
 
   return res.status(200).json({
-    message: `Address ${address_to_bind} binded to ${address}`,
+    message: `Address ${addressToBind} binded to ${address}`,
   });
 };
 
@@ -140,12 +159,12 @@ exports.refreshNfts = async (req, res, next) => {
 
   // Get Bounded Addresses
   let query = await User.findOne({ address: address }).select(
-    "bounded_addresses"
+    "boundedAddresses"
   );
 
   const chain = "ETH";
   let totalData = [];
-  for (let bounded_address of query.bounded_addresses) {
+  for (let bounded_address of query.boundedAddresses) {
     let data = await getNFTSfromTATUM(
       bounded_address.chain,
       bounded_address.address

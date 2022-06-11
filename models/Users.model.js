@@ -8,17 +8,32 @@ const NFTMetadata = new mongoose.Schema({
   metadata: { type: [Object], required: true },
 });
 
+/**
+ * User
+ * @typedef {object} AddressWithChain
+ * @property {string} address.required - Wallet address of the user
+ * @property {string} chain.required - Chain Id of Address
+ */
 const AddressWithChain = new mongoose.Schema({
   address: { type: String, required: true },
   chain: { type: String, required: true },
 });
 
+/**
+ * User
+ * @typedef {object} User
+ * @property {string} address.required - Wallet address of the user
+ * @property {[AddressWithChain]} boundedAddresses.required - Bounded Addresses to the user
+ * @property {string} accountType.required - Account type of the user
+ * @property {[Object]} nftsCache - Cache of the user's owned NFTs
+ * @property {string} cacheLastUpdated - UNIX Timestamp of the last time the cache was updated
+ */
 const userSchema = new mongoose.Schema({
   address: { type: String, required: true },
-  bounded_addresses: { type: [AddressWithChain], required: true },
-  account_type: { type: String, default: "basic" },
-  nfts_cache: { type: [NFTMetadata] },
-  cache_last_updated: { type: Date },
+  boundedAddresses: { type: [AddressWithChain], required: true },
+  accountType: { type: String, default: "basic" },
+  nftsCache: { type: [NFTMetadata] },
+  cacheLastUpdated: { type: Date },
 });
 
 module.exports = mongoose.model("User", userSchema);
