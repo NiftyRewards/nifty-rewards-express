@@ -14,8 +14,8 @@ const MERCHANT_ADDRESS = "0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7";
 describe("Campaign", () => {
   beforeAll(async () => {
     // Remove all data that was added during tests
-    // await CampaignsModel.deleteMany({});
-    // await RewardsModel.deleteMany({});
+    await CampaignsModel.deleteMany({});
+    await RewardsModel.deleteMany({});
   });
 
   afterAll(async () => {
@@ -30,27 +30,27 @@ describe("Campaign", () => {
     app.server.close();
   });
 
-  // test("Start Campaign", async () => {
-  //   let rewardData = {};
+  test("Start Campaign", async () => {
+    let rewardData = {};
 
-  //   const response = await request(app)
-  //     .post("/api/v1/campaign/start")
-  //     .set("Content-Type", "application/json")
-  //     .send({
-  //       merchantAddress: MERCHANT_ADDRESS,
-  //       collectionAddress: AZUKI_CONTRACT_ADDRESS,
-  //       chainId: "1",
-  //       title: "Test Campaign",
-  //       description: "Test Campaign Description",
-  //       startDate: "2022-01-01",
-  //       endDate: "2022-06-01",
-  //       redemptionCount: "1",
-  //     }); // TODO
-  //   console.log("🚀 | test | response", response._body);
+    const response = await request(app)
+      .post("/api/v1/campaign/start")
+      .set("Content-Type", "application/json")
+      .send({
+        merchantAddress: MERCHANT_ADDRESS,
+        collectionAddress: AZUKI_CONTRACT_ADDRESS,
+        chainId: "1",
+        title: "Test Campaign",
+        description: "Test Campaign Description",
+        startDate: "2022-01-01",
+        endDate: "2022-06-01",
+        redemptionCount: "1",
+      }); // TODO
+    console.log("🚀 | test | response", response._body);
 
-  //   expect(response.status).toEqual(200);
-  //   expect(response._body.message).toEqual("Campaign started");
-  // });
+    expect(response.status).toEqual(200);
+    expect(response._body.message).toEqual("Campaign started");
+  });
 
   test("Get All Campaigns", async () => {
     const response = await request(app).get(`/api/v1/campaign`);
