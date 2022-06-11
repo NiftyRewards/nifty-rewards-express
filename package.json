@@ -10,7 +10,7 @@
     "test:merchant": "jest --testRunner=jest-circus/runner tests/merchant.test.js",
     "test:reward": "jest --testRunner=jest-circus/runner tests/reward.test.js",
     "test:collection": "jest --testRunner=jest-circus/runner tests/collection.test.js",
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "deploy:dev": "heroku git:remote -a nifty-dev && git push heroku development:main",
     "deploy:prod": "heroku git:remote -a nifty && git push heroku main:main"
   },
@@ -22,6 +22,7 @@
     "dotenv": "^16.0.1",
     "ethers": "^5.6.8",
     "express": "^4.18.1",
+    "express-jsdoc-swagger": "^1.6.8",
     "express-validator": "^6.14.1",
     "helmet": "^5.1.0",
     "mongoose": "^6.3.4",
