@@ -18,7 +18,7 @@ const connectDB = () => {
   };
   if (process.env.NODE_ENV === "test") {
     console.log("LOCAL DB...");
-    MONGODB_URI = `mongodb://localhost:27017/${DATABASE_NAME}`;
+    MONGODB_URI = `mongodb://localhost:27017/${DATABASE_NAME_PROD}`;
   } else if (process.env.NODE_ENV == "dev") {
     console.log("DEV DB...");
     MONGODB_URI = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_DOMAIN}/${DATABASE_NAME_DEV}`;
