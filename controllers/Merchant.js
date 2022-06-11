@@ -1,13 +1,45 @@
 const Merchant = require("../models/Merchants.model");
-const axios = require("axios");
-const { chains } = require("../utils/chains");
+const ethers = require("ethers");
 
+/**
+ * POST /api/v1/merchant/create
+ * @summary Create a merchant account
+ * @tags Merchant
+ * @description Create a merchant account
+ * @param {string} address.required - Merchant Address
+ * @param {string} name.required - Merchant Name
+ * @param {string} description.required - Merchant Description
+ * @return {object} 200 - Success response
+ * @example response - 200 - Successful Creation of Merchant Account
+ * {
+ *   "message": "Merchant Created"
+ * }
+ * @return {object} 400 - Bad request response
+ * @example response - 400 - Invalid Address
+ * {
+ *   "message": "Invalid address"
+ * }
+ * @example response - 400 - Error
+ * {
+ *   "message": "Merchant not created"
+ * }
+ */
 exports.createMerchant = async (req, res, next) => {
-  const { name, description, merchantAddress } = req.body;
+  let { address, name, description } = req.body;
+
+  // Check if valid address
+  try {
+    address = ethers.utils.getAddress(address);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      message: "Invalid address",
+    });
+  }
 
   try {
-    const newMerchant = Merchant.create({
-      merchant_address: merchantAddress,
+    const newMerchant = await Merchant.create({
+      address: address,
       name: name,
       description: description,
     });
@@ -22,6 +54,20 @@ exports.createMerchant = async (req, res, next) => {
     });
   }
 };
+
+/**
+ * GET /api/v1/merchant
+ * @summary Get all merchants
+ * @tags Merchant
+ * @description Get all merchants from database
+ * @return {object} 200 - Success response
+ * @example response - 200 - Successful Retrieval of Merchants
+ * {
+ *   "message": "Merchants retrieved"
+ *    "data": {}
+ * }
+ * @return {object} 400 - Bad request response
+ */
 exports.getMerchants = async (req, res, next) => {
   try {
     const merchants = await Merchant.find({}, { _id: 0, __v: 0 });
@@ -37,10 +83,10 @@ exports.getMerchants = async (req, res, next) => {
   }
 };
 exports.getMerchant = async (req, res, next) => {
-  const { merchantAddress } = req.params;
+  const { address } = req.params;
   try {
     const merchants = await Merchant.find(
-      { merchant_address: merchantAddress },
+      { address: address },
       { _id: 0, __v: 0 }
     );
     return res.status(200).json({
@@ -55,10 +101,10 @@ exports.getMerchant = async (req, res, next) => {
   }
 };
 exports.verifyMerchant = async (req, res, next) => {
-  const { merchantAddress } = req.params;
+  const { address } = req.params;
   try {
     const merchant = await Merchant.findOneAndUpdate(
-      { merchant_address: merchantAddress },
+      { address: address },
       { verified: true }
     );
     return res.status(200).json({
@@ -73,11 +119,11 @@ exports.verifyMerchant = async (req, res, next) => {
   }
 };
 exports.editMerchant = async (req, res, next) => {
-  const { merchantAddress } = req.params;
+  const { address } = req.params;
   const { name, description } = req.body;
   try {
     const merchant = await Merchant.findOneAndUpdate(
-      { merchant_address: merchantAddress },
+      { address: address },
       { name, description }
     );
     return res.status(200).json({

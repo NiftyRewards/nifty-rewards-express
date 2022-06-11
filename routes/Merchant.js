@@ -9,10 +9,10 @@ const {
   editMerchant,
 } = require("../controllers/Merchant");
 
-// router.route("/").get(getMerchants);
-// router.route("/:merchantAddress").get(getMerchant);
-// router.route("/:merchantAddress/edit").put(editMerchant);
+router.route("/").get(getMerchants);
+router.route("/:merchantAddress").get(getMerchant);
+router.route("/:merchantAddress/edit").put(editMerchant);
 router.route("/create").post(createMerchant);
-// router.route("/:merchantAddress/verify").put(verifyMerchant);
+router.route("/:merchantAddress/verify").put(verifyMerchant);
 
 module.exports = router;
