@@ -33,23 +33,23 @@ describe("User", () => {
       "0xbc8a477dbb1c1451babfc71d09200129cb66f64586505162e0bbf4e13180a994"; // DO NOT USE IN PRODUCTION
     const wallet = new ethers.Wallet(TEST_PRIVATE_KEY);
 
-    const address_to_bind = wallet.address;
-    const address_to_bind_chain = 1;
+    const addressToBind = wallet.address;
+    const chain = 1;
 
-    const message = `Bind Account ${address_to_bind} on chainId ${address_to_bind_chain} to ${address}`;
+    const message = `Bind Account ${addressToBind} on chainId ${chain} to ${address}`;
     const signature = await wallet.signMessage(message);
 
     const response = await request(app).post("/api/v1/user/bind").send({
       address: address,
-      address_to_bind: address_to_bind,
-      address_to_bind_chain: address_to_bind_chain,
+      addressToBind: addressToBind,
+      chain: chain,
       message: message,
       signature: signature,
     });
 
     expect(response.status).toEqual(200);
     expect(response._body.message).toEqual(
-      `Address ${address_to_bind} binded to ${address}`
+      `Address ${addressToBind} binded to ${address}`
     );
   });
 
@@ -60,29 +60,29 @@ describe("User", () => {
       "0x0e6ed8cb707826b42f6cbf06ad38b14ecd8a2da9384f39f0d50cfff8b2ae9c3f"; // DO NOT USE IN PRODUCTION
     const wallet = new ethers.Wallet(TEST_PRIVATE_KEY);
 
-    const address_to_bind = wallet.address;
-    const address_to_bind_chain = 1;
+    const addressToBind = wallet.address;
+    const chain = 1;
 
-    const message = `Bind Account ${address_to_bind} on chainId ${address_to_bind_chain} to ${address}`;
+    const message = `Bind Account ${addressToBind} on chainId ${chain} to ${address}`;
     const signature = await wallet.signMessage(message);
 
     const response = await request(app).post("/api/v1/user/bind").send({
       address: address,
-      address_to_bind: address_to_bind,
-      address_to_bind_chain: address_to_bind_chain,
+      addressToBind: addressToBind,
+      chain: chain,
       message: message,
       signature: signature,
     });
 
     expect(response.status).toEqual(200);
     expect(response._body.message).toEqual(
-      `Address ${address_to_bind} binded to ${address}`
+      `Address ${addressToBind} binded to ${address}`
     );
   });
 
   test("Refresh NFTS", async () => {
     // Add Mock Account to address
-    await User.findOneAndUpdate(
+    await UserModel.findOneAndUpdate(
       { address: "0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7" },
       {
         $push: {
