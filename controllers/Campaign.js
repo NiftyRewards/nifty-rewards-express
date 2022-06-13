@@ -162,9 +162,52 @@ exports.approveCampaign = async (req, res, next) => {
 };
 
 /**
+ * GET /api/v1/campaign/merchant
+ * @summary Get campaigns by a merchant
+ * @description Get all Campaigns started by a merchant
+ * @param {string} address.query.required - Address of the Merchant
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
+exports.getEligibleCampaigns = async (req, res, next) => {
+  let { address } = req.query;
+
+  // Check if valid address
+  try {
+    address = ethers.utils.getAddress(address);
+  } catch {
+    return res.status(400).json({
+      message: "Invalid address",
+    });
+  }
+
+  // Get merchantId
+  let merchant = await Merchant.findOne({ address: address });
+  let merchantId = merchant._id;
+
+  // Get Campaigns filtered by filtered_nfts_cache
+  let campaigns = await Campaign.find({ merchantId: merchantId }, { __v: 0 });
+
+  if (!campaigns) {
+    return res.status(200).json({
+      message: "No Campaigns By Merchant",
+      data: {},
+    });
+  }
+
+  return res.status(200).json({
+    message: "Eligible Campaigns Retrieved",
+    data: campaigns,
+  });
+};
+
+/**
+ * GET /api/v1/campaign/eligible
+ * @summary Get campaigns eligible for a user
  * @description Get Eligible Campaigns based on user's address
- * @dev This function is used to get all campaigns that are eligible for a given account
- * using the address of the account.
+ * @param {string} address.query.required - Address of the User
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
  */
 exports.getEligibleCampaigns = async (req, res, next) => {
   let { address } = req.query;
@@ -205,10 +248,13 @@ exports.getEligibleCampaigns = async (req, res, next) => {
 };
 
 /**
- * @description Get all campaigns in database
- * @param {*} req
- * @param {*} res
- * @param {*} next
+ * GET /api/v1/campaign
+ * @summary Get campaigns
+ * @tags Campaign
+ * @description Get campaign details. If no campaignId is given, retrieve all campaigns
+ * @param {string} campaignId.query.required - Campaign Id
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
  */
 exports.getCampaign = async (req, res, next) => {
   let { campaignId } = req.query;
