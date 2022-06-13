@@ -84,16 +84,19 @@ async function indexCollection(chainId, collectionAddress) {
 
 // TODO: Improve Caching Algorithm
 /**
- * @description Caches Colletion data
- * @param {*} req
- * @param {*} res
- * @param {*} next
- * @returns
+ * POST /api/v1/collection/cache
+ * @summary Cache a collection
+ * @tags Collection
+ * @description Retrieve data from TATUM API and cache in the backend
+ * @param {string} collectionAddress.required - Address of the Collection
+ * @param {string} chain.required - Chain Id
+ * @return {object} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
  */
 exports.cacheCollection = async (req, res, next) => {
-  const { collectionAddress, chainId } = req.body;
+  const { collectionAddress, chain } = req.body;
 
-  await indexCollection(chainId, collectionAddress);
+  await indexCollection(chain, collectionAddress);
 
   return res.status(200).json({
     message: "Collection Cached",

@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 /**
+ * Merchant Verify Payload
+ * @typedef {object} MerchantVerifyPayload
+ * @property {string} address.required - Wallet address of the merchant
+ */
+
+/**
  * Merchant
  * @typedef {object} Merchant
  * @property {string} address.required - Wallet address of the merchant

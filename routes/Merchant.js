@@ -11,8 +11,8 @@ const {
 
 router.route("/").get(getMerchants);
 router.route("/:merchantAddress").get(getMerchant);
-router.route("/:merchantAddress/edit").put(editMerchant);
+router.route("/edit").put(editMerchant);
 router.route("/create").post(createMerchant);
-router.route("/:merchantAddress/verify").put(verifyMerchant);
+router.route("/verify").put(verifyMerchant);
 
 module.exports = router;

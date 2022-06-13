@@ -34,11 +34,15 @@ async function getNFTSfromTATUM(chain, address) {
  * @summary Binds an external address to the user
  * @tags User
  * @description Generates a signature and binds an external address to the user
- * @param {string} address.required - Current Address
- * @param {string} addressToBind.required - Address to Bind
- * @param {string} chain.required - Chain Id
- * @param {string} message.required - Message to sign
- * @param {string} signature.required - Signature of the message
+ * @param {UserBindPayload} request.body.required
+ * @example request - UserBindPayload
+ * {
+ *  "address": "0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7",
+ *  "addressToBind": "0x26741CC7252320c092a86129a39556d0137ee8E5",
+ *  "chain": "1",
+ *  "message": "Bind Account 0x26741CC7252320c092a86129a39556d0137ee8E5 on chainId 1 to 0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7",
+ *  "signature": "0x48bd0dd7134bd1609c703540463c8b78f60f07da97f97e02010c4f457fe63d4d2d0b53a08fe9f9914889923c62afc34134311b6702db8081c9161d7a3113ae9e1b"
+ * }
  * @return {object} 200 - User successfully binded - application/json
  * @example response - 200 - Successful Bind
  * {
@@ -107,11 +111,25 @@ exports.bindAddress = async (req, res, next) => {
 };
 
 /**
+ * GET /api/v1/user/nfts
+ * @summary Get NFTs from database Cache
  * @description Get NFTs from database Cache
- * @param {*} req
- * @param {*} res
- * @param {*} next
- * @returns
+ * @tags User
+ * @param {string} address.required - Address of the wallet
+ * @return {object} 200 - User successfully binded - application/json
+ * @example response - 200 - Successful Retrieval of NFTs
+ * {
+ *   "message": "NFTS Retrieved"
+ * }
+ * @return {object} 400 - Bad request response
+ * @example response - 400 - Invalid Address
+ * {
+ *   "message": "Invalid address"
+ * }
+ * @example response - 400 - Invalid User
+ * {
+ *   "message": "User not found"
+ * }
  */
 exports.getNfts = async (req, res, next) => {
   let { address } = req.query;
@@ -130,7 +148,7 @@ exports.getNfts = async (req, res, next) => {
 
   // Return error if user not found
   if (!user) {
-    return res.status(404).json({
+    return res.status(400).json({
       message: "User not found",
     });
   }
@@ -142,7 +160,25 @@ exports.getNfts = async (req, res, next) => {
 };
 
 /**
- * @description Refreshes the NFTs of the user in the cache
+ * GET /api/v1/user/refresh
+ * @summary Refresh NFT Cache of specified user
+ * @description Refresh NFT Cache of specified user based on the input address
+ * @tags User
+ * @param {string} address.required - Address of the wallet
+ * @return {object} 200 - Success Response - application/json
+ * @example response - 200 - Successful Refresh of Cache
+ * {
+ *   "message": "NFTS Refreshed"
+ * }
+ * @return {object} 400 - Bad request response
+ * @example response - 400 - Invalid Address
+ * {
+ *   "message": "Invalid address"
+ * }
+ * @example response - 400 - Invalid User
+ * {
+ *   "message": "User not found"
+ * }
  */
 exports.refreshNfts = async (req, res, next) => {
   let { address } = req.query;
@@ -168,15 +204,11 @@ exports.refreshNfts = async (req, res, next) => {
       boundedAddress.chain,
       boundedAddress.address
     );
-    console.log("🚀 | exports.refreshNfts= | data", data);
     data.map((collection) => {
       collection.chain = boundedAddress.chain;
       collection.contractIdentifier = `${boundedAddress.chain}-${collection.contractAddress}`;
     });
-    console.log("🚀 | data.map | data", data);
-
     totalData = totalData.concat(data);
-    console.log("🚀 | exports.refreshNfts= | totalData", totalData);
   }
 
   // Cache data from TATUM to User Collection

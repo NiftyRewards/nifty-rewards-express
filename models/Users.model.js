@@ -14,10 +14,21 @@ const NFTMetadata = new mongoose.Schema({
  * @property {string} address.required - Wallet address of the user
  * @property {string} chain.required - Chain Id of Address
  */
+
 const AddressWithChain = new mongoose.Schema({
   address: { type: String, required: true },
   chain: { type: String, required: true },
 });
+
+/**
+ * User Bind Payload
+ * @typedef {object} UserBindPayload
+ * @property {string} address.required - Current Address
+ * @property {string} addressToBind.required - Address to Bind
+ * @property {string} chain.required - Chain Id
+ * @property {string} message.required - Message to sign
+ * @property {string} signature.required - Signature of the message
+ */
 
 /**
  * User

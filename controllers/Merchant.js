@@ -63,7 +63,7 @@ exports.createMerchant = async (req, res, next) => {
  * @return {object} 200 - Success response
  * @example response - 200 - Successful Retrieval of Merchants
  * {
- *   "message": "Merchants retrieved"
+ *   "message": "Merchants retrieved",
  *    "data": {}
  * }
  * @return {object} 400 - Bad request response
@@ -82,6 +82,26 @@ exports.getMerchants = async (req, res, next) => {
     });
   }
 };
+
+/**
+ * GET /api/v1/merchant/{address}
+ * @summary Get a single merchant based on address
+ * @tags Merchant
+ * @param {string} address.path.required - Merchant Address
+ * @description Get a single merchant based on address
+ * @return {object} 200 - Success response
+ * @example response - 200 - Successful retrieval of Merchants
+ * {
+ *   "message": "Merchant retrieved",
+ *    "data": {}
+ * }
+ * @return {object} 400 - Bad request response
+ * @example response - 400 - Fail to retrieve specified merchant
+ * {
+ *   "message": "Merchant retrieved",
+ *    "data": {}
+ * }
+ */
 exports.getMerchant = async (req, res, next) => {
   const { address } = req.params;
   try {
@@ -100,6 +120,30 @@ exports.getMerchant = async (req, res, next) => {
     });
   }
 };
+
+/**
+ * POST /api/v1/merchant/verify
+ * @summary Verify a merchant
+ * @tags Merchant
+ * @param {MerchantVerifyPayload} request.body.required - Merchant Verification Payload
+ * @description Verify a merchant
+ * @return {object} 200 - Success response
+ * @example request - example payload
+ * {
+ *   "address": "0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7"
+ * }
+ * @example response - 200 - Successful verification of Merchants
+ * {
+ *   "message": "Merchant verified",
+ *    "data": {}
+ * }
+ * @return {object} 400 - Bad request response
+ * @example response - 400 - Fail to verify specified merchant
+ * {
+ *   "message": "Error Verifying Merchant",
+ *    "data": {}
+ * }
+ */
 exports.verifyMerchant = async (req, res, next) => {
   const { address } = req.params;
   try {
@@ -113,11 +157,31 @@ exports.verifyMerchant = async (req, res, next) => {
     });
   } catch (error) {
     return res.status(400).json({
-      message: "Merchant not verified",
+      message: "Error Verifying Merchant",
       error,
     });
   }
 };
+
+/**
+ * Put /api/v1/merchant/edit
+ * @summary Get a single merchant based on address
+ * @tags Merchant
+ * @param {string} address.required - Merchant Address
+ * @description Get a single merchant based on address
+ * @return {object} 200 - Success response
+ * @example response - 200 - Successful retrieval of Merchants
+ * {
+ *   "message": "Merchant retrieved",
+ *    "data": {}
+ * }
+ * @return {object} 400 - Bad request response
+ * @example response - 400 - Fail to retrieve specified merchant
+ * {
+ *   "message": "Merchant retrieved",
+ *    "data": {}
+ * }
+ */
 exports.editMerchant = async (req, res, next) => {
   const { address } = req.params;
   const { name, description } = req.body;

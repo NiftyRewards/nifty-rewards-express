@@ -3,8 +3,31 @@ const ethers = require("ethers");
 const User = require("../models/Users.model");
 const Reward = require("../models/Rewards.model");
 const Campaign = require("../models/Campaigns.model");
+
+/**
+ * GET /api/v1/rewards
+ * @summary Get available rewards based on user and campaign Id
+ * @description Get available rewards based on user and campaign Id
+ * @tags Rewards
+ * @param {string} address.required - Address of the account
+ * @param {string} campaignId.required - Campaign Id to get rewards from
+ * @return {object} 200 - Success Response - application/json
+ * @example response - 200 - Successful Refresh of Cache
+ * {
+ *   "message": "NFTS Refreshed"
+ * }
+ * @return {object} 400 - Bad request response
+ * @example response - 400 - Invalid Address
+ * {
+ *   "message": "Invalid address"
+ * }
+ * @example response - 400 - Invalid User
+ * {
+ *   "message": "User not found"
+ * }
+ */
 exports.getRewards = async (req, res, next) => {
-  let { address, campaign_id } = req.query;
+  let { address, campaignId } = req.query;
 
   // Check if valid address
   try {
@@ -15,9 +38,9 @@ exports.getRewards = async (req, res, next) => {
     });
   }
 
-  // Find Rewards with campaign_id and address
+  // Find Rewards with campaignId and address
   let rewards = await Reward.find({
-    campaign_id: campaign_id,
+    campaignId: campaignId,
     collection_address: address,
   });
 };
@@ -37,7 +60,7 @@ exports.redeemReward = async (req, res, next) => {
 
   // Find Reward with reward_id and address
   let reward = await Reward.findOne({
-    campaign_id: campaignId,
+    campaignId: campaignId,
     token_id: tokenId,
   });
   console.log(
@@ -59,7 +82,7 @@ exports.redeemReward = async (req, res, next) => {
     });
   }
 
-  let campaign = await Campaign.findOne({ _id: reward.campaign_id });
+  let campaign = await Campaign.findOne({ _id: reward.campaignId });
   console.log("🚀 | exports.redeemReward= | campaign", campaign.start_date);
   console.log("🚀 | exports.redeemReward= | campaign", campaign.end_date);
 
