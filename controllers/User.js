@@ -115,7 +115,7 @@ exports.bindAddress = async (req, res, next) => {
  * @summary Get NFTs from database Cache
  * @description Get NFTs from database Cache
  * @tags User
- * @param {string} address.required - Address of the wallet
+ * @param {string} address.query.required - Address of the wallet
  * @return {object} 200 - User successfully binded - application/json
  * @example response - 200 - Successful Retrieval of NFTs
  * {
