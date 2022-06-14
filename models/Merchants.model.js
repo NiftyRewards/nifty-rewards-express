@@ -20,7 +20,7 @@ const merchantsSchema = new mongoose.Schema({
   name: { type: String, required: true, default: "Merchant" },
   description: { type: String },
   verified: { type: Boolean, default: true },
-  campaigns: { type: [mongoose.Schema.Types.ObjectId], required: true },
+  campaigns: { type: [mongoose.Schema.Types.ObjectId] },
 });
 
 module.exports = mongoose.model("Merchant", merchantsSchema);
