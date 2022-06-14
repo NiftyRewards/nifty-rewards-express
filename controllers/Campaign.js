@@ -82,12 +82,12 @@ exports.startCampaign = async (req, res, next) => {
   let campaign;
   try {
     campaign = await Campaign.create({
-      merchant_id: merchant._id,
+      merchantId: merchant._id,
       collectionIdentifier: collection.collectionIdentifier,
       title: title,
       description: description,
-      start_date: startDate,
-      end_date: endDate,
+      startDate: startDate,
+      endDate: endDate,
     });
 
     // Add Campaign to Merchant
@@ -97,6 +97,7 @@ exports.startCampaign = async (req, res, next) => {
   } catch (err) {
     return res.status(400).json({
       message: "Error Creating Campaign",
+      error: err,
     });
   }
 
@@ -116,11 +117,11 @@ exports.startCampaign = async (req, res, next) => {
 
     tokenIds = tokenIds.map((tokenId) => {
       return {
-        campaign_id: campaign._id,
+        campaignId: campaign._id,
         collectionIdentifier: collectionIdentifier,
-        collection_address: collectionAddress,
+        collectionAddress: collectionAddress,
         chain: chainId,
-        token_id: tokenId,
+        tokenId: tokenId,
         quantity: redemptionCount,
       };
     });
@@ -257,6 +258,46 @@ exports.getEligibleCampaigns = async (req, res, next) => {
  * @return {object} 400 - Bad request response
  */
 exports.getCampaign = async (req, res, next) => {
+  let { campaignId } = req.query;
+  let campaigns;
+
+  try {
+    if (campaignId) {
+      campaigns = await Campaign.findById(campaignId, { __v: 0 });
+    } else {
+      campaigns = await Campaign.find({}, { __v: 0 });
+    }
+  } catch (error) {
+    console.log("🚀 | exports.getCampaign= | error", error);
+    return res.status(400).json({
+      message: "Invalid Request",
+      error: error,
+    });
+  }
+
+  if (!campaigns) {
+    return res.status(200).json({
+      message: "No Campaigns",
+      data: {},
+    });
+  }
+
+  return res.status(200).json({
+    message: "Campaigns Retrieved",
+    data: campaigns,
+  });
+};
+
+/**
+ * GET /api/v1/campaign/merchants
+ * @summary Get campaigns by a merchant
+ * @tags Campaign
+ * @description Get merchant's campaigns to populate on the merchant dashboard
+ * @param {string} merchantAddress.query.required - Merchant address
+ * @return {CampaignMerchantResponse} 200 - success response - application/json
+ * @return {object} 400 - Bad request response
+ */
+exports.getMerchantCampaigns = async (req, res, next) => {
   let { campaignId } = req.query;
   let campaigns;
 
