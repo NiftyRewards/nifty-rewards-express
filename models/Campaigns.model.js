@@ -11,6 +11,18 @@ const Rewards = require("./Rewards.model");
  * @property {string} startDate.required - UNIX timestamp of the start of the campaign
  * @property {string} endDate.required - UNIX timestamp of the end of the campaign
  */
+
+/**
+ * Campaign Merchant Response
+ * @typedef {object} CampaignMerchantResponse
+ * @property {string} name.required - Name of the campaign
+ * @property {string} status.required - Status of the campaign (active, inactive, completed)
+ * @property {string} total.required - Total Rewards available for the campaign
+ * @property {string} claimed.required - Total Rewards claimed already for the campaign
+ * @property {string} startDate.required - UNIX timestamp of the start of the campaign
+ * @property {string} endDate.required - UNIX timestamp of the end of the campaign
+ */
+
 const campaignsSchema = new mongoose.Schema({
   merchantId: { type: mongoose.Schema.Types.ObjectId, required: true },
   collectionIdentifier: { type: String, required: true },
