@@ -10,6 +10,7 @@ const {
   getAllCampaigns,
   approveCampaign,
   getEligibleCampaigns,
+  getMerchantCampaigns,
 } = require("../controllers/Campaign");
 
 router.route("/start").post(startCampaign);
@@ -17,5 +18,6 @@ router.route("/").get(getCampaign);
 router.route("/edit").put(editCampaign);
 router.route("/approve").put(approveCampaign);
 router.route("/eligible").put(getEligibleCampaigns);
+router.route("/merchant").get(getMerchantCampaigns);
 
 module.exports = router;
