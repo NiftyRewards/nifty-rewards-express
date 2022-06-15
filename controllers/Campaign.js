@@ -1,5 +1,6 @@
 const Campaign = require("../models/Campaigns.model");
 const Merchant = require("../models/Merchants.model");
+const User = require("../models/Users.model");
 const Collection = require("../models/Collections.model");
 const Reward = require("../models/Rewards.model");
 const axios = require("axios");
@@ -11,8 +12,11 @@ const { chains } = require("../utils/chains");
  * @returns List of collection identifiers
  */
 function getCollectionIdentifiers(nfts_cache) {
+  // Split each collection into its own array at the - character
+
   let collectionIdentifiers = nfts_cache.map((collection) => {
-    return collection.collectionIdentifier;
+    let ci = collection.collectionIdentifier.split("-");
+    return ci[0] + "-" + ethers.utils.getAddress(ci[1]);
   });
   return collectionIdentifiers;
 }
@@ -23,15 +27,30 @@ function getCollectionIdentifiers(nfts_cache) {
  * @tags Campaign
  * @description Start a new campaign
  * when Campaign is started rewards are generated as well
- * @param {string} merchantAddress.required - Address of the Merchant
- * @param {string} collectionAddress.required - Address of the Collection
- * @param {string} chain.required - Chain Id
- * @param {string} title.required - Title of Campaign
- * @param {string} description.required - Description of Campaign
- * @param {string} startDate.required - Start Date of Campaign
- * @param {string} endDate.required - End Date of Campaign
- * @param {[string]} tokenIdsrequired - Token Ids eligible for campaign
- * @param {string} redemptionCount.required - Number of times a reward can be redeemed
+ * @param {CampaignStartPayload} request.body.required
+ *  @example request - CampaignStartPayload
+ * {
+ *  "merchantAddress": "0xc1C9D88A4E58B5E395675ded16960Ffca265bA52",
+ *  "collectionAddress": "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+ *  "chainId": "1",
+ *  "title": "Campaign Title",
+ *  "description": "Campaign Description",
+ *  "startDate": "2020-01-01",
+ *  "endDate": "2020-08-01",
+ *  "redemptionCount": "1"
+ * }
+ * @example request - CampaignStartPayload with affectedTokens
+ * {
+ *  "merchantAddress": "0xc1C9D88A4E58B5E395675ded16960Ffca265bA52",
+ *  "collectionAddress": "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+ *  "chainId": "1",
+ *  "title": "Campaign Title",
+ *  "description": "Campaign Description",
+ *  "startDate": "2020-01-01",
+ *  "endDate": "2020-08-01",
+ *  "affectedTokens": [1, 2, 3, 4],
+ *  "redemptionCount": "1"
+ * }
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
@@ -47,6 +66,10 @@ exports.startCampaign = async (req, res, next) => {
     affectedTokens,
     redemptionCount,
   } = req.body;
+
+  if (!redemptionCount) {
+    redemptionCount = 1;
+  }
 
   // Check if valid address
   try {
@@ -163,49 +186,10 @@ exports.approveCampaign = async (req, res, next) => {
 };
 
 /**
- * GET /api/v1/campaign/merchant
- * @summary Get campaigns by a merchant
- * @description Get all Campaigns started by a merchant
- * @param {string} address.query.required - Address of the Merchant
- * @return {object} 200 - success response - application/json
- * @return {object} 400 - Bad request response
- */
-exports.getEligibleCampaigns = async (req, res, next) => {
-  let { address } = req.query;
-
-  // Check if valid address
-  try {
-    address = ethers.utils.getAddress(address);
-  } catch {
-    return res.status(400).json({
-      message: "Invalid address",
-    });
-  }
-
-  // Get merchantId
-  let merchant = await Merchant.findOne({ address: address });
-  let merchantId = merchant._id;
-
-  // Get Campaigns filtered by filtered_nfts_cache
-  let campaigns = await Campaign.find({ merchantId: merchantId }, { __v: 0 });
-
-  if (!campaigns) {
-    return res.status(200).json({
-      message: "No Campaigns By Merchant",
-      data: {},
-    });
-  }
-
-  return res.status(200).json({
-    message: "Eligible Campaigns Retrieved",
-    data: campaigns,
-  });
-};
-
-/**
  * GET /api/v1/campaign/eligible
  * @summary Get campaigns eligible for a user
- * @description Get Eligible Campaigns based on user's address
+ * @tags Campaign
+ * @description Get Eligible Campaigns based on user's address (e.g. 0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7)
  * @param {string} address.query.required - Address of the User
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
@@ -224,16 +208,21 @@ exports.getEligibleCampaigns = async (req, res, next) => {
 
   // Get user
   let user = await User.findOne({ address: address });
-  let nfts_cache = user.nfts_cache;
-  let filtered_nfts_cache = getCollectionIdentifiers(nfts_cache);
+  let nftsCache = user.nftsCache;
+  let filteredNftsCache = getCollectionIdentifiers(nftsCache);
+  console.log(
+    "🚀 | exports.getEligibleCampaigns= | filteredNftsCache",
+    filteredNftsCache
+  );
 
   // Get Rewards filtered by filtered_nfts_cache
   let campaigns = await Campaign.find(
     {
-      collectionIdentifier: { $all: filtered_nfts_cache },
+      collectionIdentifier: filteredNftsCache,
     },
     { __v: 0 }
   );
+  console.log("🚀 | exports.getEligibleCampaigns= | campaigns", campaigns);
 
   if (!campaigns) {
     return res.status(200).json({
@@ -253,7 +242,7 @@ exports.getEligibleCampaigns = async (req, res, next) => {
  * @summary Get campaigns
  * @tags Campaign
  * @description Get campaign details. If no campaignId is given, retrieve all campaigns
- * @param {string} campaignId.query.required - Campaign Id
+ * @param {string} campaignId.query - Campaign Id
  * @return {object} 200 - success response - application/json
  * @return {object} 400 - Bad request response
  */
@@ -289,26 +278,41 @@ exports.getCampaign = async (req, res, next) => {
 };
 
 /**
- * GET /api/v1/campaign/merchants
+ * GET /api/v1/campaign/merchant
  * @summary Get campaigns by a merchant
  * @tags Campaign
  * @description Get merchant's campaigns to populate on the merchant dashboard
- * @param {string} merchantAddress.query.required - Merchant address
- * @return {CampaignMerchantResponse} 200 - success response - application/json
+ * @param {string} merchantAddress.query.required - Merchant address - (e.g. 0xc1C9D88A4E58B5E395675ded16960Ffca265bA52)
+ * @return {CampaignMerchantResponse} 200 - Success response - application/json
  * @return {object} 400 - Bad request response
  */
 exports.getMerchantCampaigns = async (req, res, next) => {
-  let { campaignId } = req.query;
+  let { merchantAddress } = req.query;
   let campaigns;
 
+  // Get merchantId
+  let merchant = await Merchant.findOne({ address: merchantAddress });
+  console.log("🚀 | exports.getMerchantCampaigns= | merchant", merchant);
+
+  if (!merchant) {
+    return res.status(400).json({
+      message: "Invalid Request",
+      error: "Merchant not found",
+    });
+  }
+
+  let merchantId = merchant._id;
+  console.log("🚀 | exports.getMerchantCampaigns= | merchantId", merchantId);
+
   try {
-    if (campaignId) {
-      campaigns = await Campaign.findById(campaignId, { __v: 0 });
+    if (merchantId) {
+      campaigns = await Campaign.find({ merchantId: merchantId }, { __v: 0 });
     } else {
-      campaigns = await Campaign.find({}, { __v: 0 });
+      return res.status(400).json({
+        message: "merchantAddress required",
+      });
     }
   } catch (error) {
-    console.log("🚀 | exports.getCampaign= | error", error);
     return res.status(400).json({
       message: "Invalid Request",
       error: error,
@@ -318,7 +322,7 @@ exports.getMerchantCampaigns = async (req, res, next) => {
   if (!campaigns) {
     return res.status(200).json({
       message: "No Campaigns",
-      data: {},
+      data: [],
     });
   }
 
