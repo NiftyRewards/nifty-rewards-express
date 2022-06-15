@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const NFTMetadata = new mongoose.Schema({
   contractAddress: { type: String, required: true },
-  contractIdentifier: { type: String, required: true },
+  collectionIdentifier: { type: String, required: true },
   chain: { type: String, required: true },
   balances: { type: [String], required: true },
   metadata: { type: [Object], required: true },

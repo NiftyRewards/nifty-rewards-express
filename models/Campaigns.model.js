@@ -13,6 +13,20 @@ const Rewards = require("./Rewards.model");
  */
 
 /**
+ * Campaign Start Payload
+ * @typedef {object} CampaignStartPayload
+ * @property {string} merchantAddress.required - Address of the Merchant
+ * @property {string} collectionAddress.required - Address of the Collection
+ * @property {string} chain.required - Chain Id
+ * @property {string} title.required - Title of Campaign
+ * @property {string} description.required - Description of Campaign
+ * @property {string} startDate.required - Start Date of Campaign
+ * @property {string} endDate.required - End Date of Campaign
+ * @property {[string]} affectedTokens - Token Ids eligible for campaign
+ * @property {string} redemptionCount - Number of times a reward can be redeemed
+ */
+
+/**
  * Campaign Merchant Response
  * @typedef {object} CampaignMerchantResponse
  * @property {string} name.required - Name of the campaign

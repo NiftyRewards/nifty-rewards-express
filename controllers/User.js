@@ -164,7 +164,7 @@ exports.getNfts = async (req, res, next) => {
  * @summary Refresh NFT Cache of specified user
  * @description Refresh NFT Cache of specified user based on the input address
  * @tags User
- * @param {string} address.required - Address of the wallet
+ * @param {string} address.query.required - Address of the wallet
  * @return {object} 200 - Success Response - application/json
  * @example response - 200 - Successful Refresh of Cache
  * {
@@ -197,6 +197,13 @@ exports.refreshNfts = async (req, res, next) => {
     "boundedAddresses"
   );
 
+  // Throw error if empty query
+  if (!query) {
+    return res.status(400).json({
+      message: "User not found",
+    });
+  }
+
   const chain = "ETH";
   let totalData = [];
   for (let boundedAddress of query.boundedAddresses) {
@@ -206,7 +213,7 @@ exports.refreshNfts = async (req, res, next) => {
     );
     data.map((collection) => {
       collection.chain = boundedAddress.chain;
-      collection.contractIdentifier = `${boundedAddress.chain}-${collection.contractAddress}`;
+      collection.collectionIdentifier = `${boundedAddress.chain}-${collection.contractAddress}`;
     });
     totalData = totalData.concat(data);
   }
@@ -214,7 +221,7 @@ exports.refreshNfts = async (req, res, next) => {
   // Cache data from TATUM to User Collection
   await User.findOneAndUpdate(
     { address },
-    { nftsCache: totalData, cacheLastUpdate: Date.now() }
+    { nftsCache: totalData, cacheLastUpdated: Date.now() }
   );
 
   return res.status(200).json({
