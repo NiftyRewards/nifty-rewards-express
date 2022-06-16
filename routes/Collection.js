@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const { cacheCollection } = require("../controllers/Collection");
+const { cacheCollection, getCollection } = require("../controllers/Collection");
 
 router.route("/cache").post(cacheCollection);
+// router.route("/collection").get(getCollection);
 
 module.exports = router;

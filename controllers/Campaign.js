@@ -283,7 +283,7 @@ exports.getCampaign = async (req, res, next) => {
  * @tags Campaign
  * @description Get merchant's campaigns to populate on the merchant dashboard
  * @param {string} merchantAddress.query.required - Merchant address - (e.g. 0xc1C9D88A4E58B5E395675ded16960Ffca265bA52)
- * @return {CampaignMerchantResponse} 200 - Success response - application/json
+ * @return {CampaignMerchantSummaryResponse} 200 - Success response - application/json
  * @return {object} 400 - Bad request response
  */
 exports.getMerchantCampaigns = async (req, res, next) => {

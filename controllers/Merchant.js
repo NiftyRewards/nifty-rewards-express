@@ -104,6 +104,7 @@ exports.getMerchants = async (req, res, next) => {
  */
 exports.getMerchant = async (req, res, next) => {
   const { address } = req.params;
+  console.log("🚀 | exports.getMerchant= | address", address);
   try {
     const merchants = await Merchant.find(
       { address: address },

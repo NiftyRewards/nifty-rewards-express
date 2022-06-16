@@ -1,6 +1,22 @@
 const mongoose = require("mongoose");
 
 /**
+ * Collection Summary
+ * @typedef {object} CollectionSummary
+ * @property {string} collectionId.required - Collection Id
+ * @property {string} name.required - Name of the collection
+ * @property {string} totalSupply.required - Total Supply of the collection
+ */
+
+/**
+ * Collection Summary
+ * @typedef {object} CollectionSummary
+ * @property {string} collectionId.required - Collection Id
+ * @property {string} name.required - Name of the collection
+ * @property {string} totalSupply.required - Total Supply of the collection
+ */
+
+/**
  * Collection
  * @typedef {object} Collection
  * @property {string} collectionAddress.required - Contract address of the collection
