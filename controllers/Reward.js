@@ -43,7 +43,53 @@ exports.getRewards = async (req, res, next) => {
     campaignId: campaignId,
     collection_address: address,
   });
+
+  return res.status(200).json({
+    message: "Rewards retrieved",
+    rewards
+  });
 };
+
+/**
+ * PUT /api/v1/redeem
+ * @summary Redeem reward
+ * @description Redeem reward specified by campaign Id and token Id, that belongs to userAddress
+ * @tags Rewards
+ * @param {string} address.required - Address of the user account
+ * @param {string} campaignId.required - Campaign Id to redeem rewards from
+ * @param {string} campaignId.required - NFT Token Id
+ * @return {object} 200 - Success Response - application/json
+ * @example response - 200 - Successful Redemption of reward
+ * {
+ *   "message": "Reward redeemed"
+ * }
+ * @return {object} 400 - Bad request response
+ * @example response - 400 - Invalid userAddress
+ * {
+ *   "message": "Invalid address"
+ * }
+ * @example response - 400 - Invalid Reward
+ * {
+ *   "message": "Reward not found"
+ * }
+ * @example response - 400 - Reward Fully Redeemed
+ * {
+ *   "message": "Reward already fully redeemed"
+ * }
+ * @example response - 400 - Reward Not Started
+ * {
+ *   "message": "Reward not started"
+ * }
+ * @example response - 400 - Reward Expired
+ * {
+ *   "message": "Reward expired"
+ * }
+ * @example response - 400 - User does not own reward
+ * {
+ *   "message": "User does not own reward"
+ * }
+ *
+ */
 exports.redeemReward = async (req, res, next) => {
   let { userAddress, campaignId, tokenId } = req.body;
   console.log("🚀 | exports.redeemReward= | userAddress", userAddress);
