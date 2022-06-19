@@ -67,6 +67,7 @@ const campaignsSchema = new mongoose.Schema({
   description: { type: String, required: true },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
+  paused: { type: Boolean, required: true, default: false },
   // rewards: { type: [Rewards.schema], required: true },
 });
 
