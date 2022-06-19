@@ -6,9 +6,7 @@ const ethers = require("ethers");
  * @summary Create a merchant account
  * @tags Merchant
  * @description Create a merchant account
- * @param {string} address.required - Merchant Address
- * @param {string} name.required - Merchant Name
- * @param {string} description.required - Merchant Description
+ * @param {MerchantCreatePayload} request.body.required - Merchant Creation Payload
  * @return {object} 200 - Success response
  * @example response - 200 - Successful Creation of Merchant Account
  * {
@@ -84,10 +82,10 @@ exports.getMerchants = async (req, res, next) => {
 };
 
 /**
- * GET /api/v1/merchant/{address}
+ * GET /api/v1/merchant
  * @summary Get a single merchant based on address
  * @tags Merchant
- * @param {string} address.path.required - Merchant Address
+ * @param {string} address.query.required - Merchant Address
  * @description Get a single merchant based on address
  * @return {object} 200 - Success response
  * @example response - 200 - Successful retrieval of Merchants
@@ -95,29 +93,30 @@ exports.getMerchants = async (req, res, next) => {
  *   "message": "Merchant retrieved",
  *    "data": {}
  * }
- * @return {object} 400 - Bad request response
- * @example response - 400 - Fail to retrieve specified merchant
+ * @return {DefaultErrorResponse} 400 - Bad request response
+ * @example response - 400 - Fail to retrieve merchant
  * {
- *   "message": "Merchant retrieved",
- *    "data": {}
+ *   "error": "Error Retrieving Merchant(s)"
  * }
  */
 exports.getMerchant = async (req, res, next) => {
   const { address } = req.params;
+  let merchants;
   console.log("🚀 | exports.getMerchant= | address", address);
   try {
-    const merchants = await Merchant.find(
-      { address: address },
-      { _id: 0, __v: 0 }
-    );
+    if (address) {
+      merchants = await Merchant.find({ address: address }, { _id: 0, __v: 0 });
+    } else {
+      merchants = await Merchant.find({}, { _id: 0, __v: 0 });
+    }
+
     return res.status(200).json({
       message: "Merchants retrieved",
       data: merchants,
     });
   } catch (error) {
     return res.status(400).json({
-      message: "Merchants not retrieved",
-      error,
+      error: "Error Retrieving Merchant(s)",
     });
   }
 };

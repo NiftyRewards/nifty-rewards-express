@@ -25,10 +25,9 @@ function getCollectionIdentifiers(nfts_cache) {
  * POST /api/v1/campaign/start
  * @summary Start a new campaign
  * @tags Campaign
- * @description Start a new campaign
- * when Campaign is started rewards are generated as well
+ * @description Start a new campaign. When a Campaign is started rewards are generated as well
  * @param {CampaignStartPayload} request.body.required
- *  @example request - CampaignStartPayload
+ * @example request - CampaignStartPayload
  * {
  *  "merchantAddress": "0xc1C9D88A4E58B5E395675ded16960Ffca265bA52",
  *  "collectionAddress": "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
@@ -51,8 +50,8 @@ function getCollectionIdentifiers(nfts_cache) {
  *  "affectedTokens": [1, 2, 3, 4],
  *  "redemptionCount": "1"
  * }
- * @return {object} 200 - success response - application/json
- * @return {object} 400 - Bad request response
+ * @return {CampaignStartResponse} 200 - success response - application/json
+ * @return {DefaultErrorResponse} 400 - Bad request response
  */
 exports.startCampaign = async (req, res, next) => {
   let {
@@ -77,7 +76,7 @@ exports.startCampaign = async (req, res, next) => {
     collectionAddress = ethers.utils.getAddress(collectionAddress);
   } catch (error) {
     return res.status(400).json({
-      message: "Invalid address",
+      error: "Invalid address",
     });
   }
 
@@ -87,7 +86,7 @@ exports.startCampaign = async (req, res, next) => {
   });
   if (!merchant || !merchant.verified) {
     return res.status(400).json({
-      message: "Merchant not verified",
+      error: "Merchant not verified",
     });
   }
   // Check if collection exists
@@ -97,7 +96,7 @@ exports.startCampaign = async (req, res, next) => {
   });
   if (!collection) {
     return res.status(400).json({
-      message: "Collection not found",
+      error: "Collection not found",
     });
   }
 
@@ -119,8 +118,7 @@ exports.startCampaign = async (req, res, next) => {
     });
   } catch (err) {
     return res.status(400).json({
-      message: "Error Creating Campaign",
-      error: err,
+      error: "Error Creating Campaign",
     });
   }
 
@@ -159,6 +157,15 @@ exports.startCampaign = async (req, res, next) => {
 
   return res.status(200).json({
     message: "Campaign started",
+    data: {
+      id: campaign._id,
+      merchantId: campaign.merchantId,
+      collectionIdentifier: campaign.collectionIdentifier,
+      title: campaign.title,
+      description: campaign.description,
+      startDate: campaign.startDate,
+      endDate: campaign.endDate,
+    },
   });
 };
 
@@ -167,21 +174,24 @@ exports.startCampaign = async (req, res, next) => {
  * @summary Edit an existing campaign
  * @tags Campaign
  * @description Edit an existing campaign
- * @return {object} 501 - Not Implemented
+ * @return {DefaultErrorResponse} 501 - Not Implemented
  */
 exports.editCampaign = async (req, res, next) => {
   return res.status(501).json({
     message: "Not Implemented",
   });
 };
-// exports.getCampaign = async (req, res, next) => {
-//   return res.status(501).json({
-//     message: "Not Implemented",
-//   });
-// };
+
+/**
+ * PUT /api/v1/campaign/approve
+ * @summary Approve an existing campaign
+ * @tags Campaign
+ * @description Approve an existing campaign
+ * @return {DefaultErrorResponse} 501 - Not Implemented
+ */
 exports.approveCampaign = async (req, res, next) => {
   return res.status(501).json({
-    message: "Not Implemented",
+    error: "Not Implemented",
   });
 };
 
@@ -191,8 +201,8 @@ exports.approveCampaign = async (req, res, next) => {
  * @tags Campaign
  * @description Get Eligible Campaigns based on user's address (e.g. 0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7)
  * @param {string} address.query.required - Address of the User
- * @return {object} 200 - success response - application/json
- * @return {object} 400 - Bad request response
+ * @return {CampaignEligibleResponse} 200 - success response - application/json
+ * @return {DefaultErrorResponse} 400 - Bad request response
  */
 exports.getEligibleCampaigns = async (req, res, next) => {
   let { address } = req.query;
@@ -243,8 +253,8 @@ exports.getEligibleCampaigns = async (req, res, next) => {
  * @tags Campaign
  * @description Get campaign details. If no campaignId is given, retrieve all campaigns
  * @param {string} campaignId.query - Campaign Id
- * @return {object} 200 - success response - application/json
- * @return {object} 400 - Bad request response
+ * @return {CampaignEligibleResponse} 200 - success response - application/json
+ * @return {DefaultErrorResponse} 400 - Bad request response
  */
 exports.getCampaign = async (req, res, next) => {
   let { campaignId } = req.query;
@@ -284,7 +294,7 @@ exports.getCampaign = async (req, res, next) => {
  * @description Get merchant's campaigns to populate on the merchant dashboard
  * @param {string} merchantAddress.query.required - Merchant address - (e.g. 0xc1C9D88A4E58B5E395675ded16960Ffca265bA52)
  * @return {CampaignMerchantSummaryResponse} 200 - Success response - application/json
- * @return {object} 400 - Bad request response
+ * @return {DefaultErrorResponse} 400 - Bad request response
  */
 exports.getMerchantCampaigns = async (req, res, next) => {
   let { merchantAddress } = req.query;
