@@ -17,6 +17,8 @@ const jsdocOptions = {
   info: {
     version: "1.0.0",
     title: "NiftyRewards API",
+    description:
+      "NiftyRewards API Documentation, production server: https://nifty-rewards-backend.herokuapp.com",
     license: {
       name: "MIT",
     },
@@ -85,11 +87,7 @@ expressJSDocSwagger(app)(jsdocOptions);
 // ----------------------------------
 // API Routes
 // ----------------------------------
-/**
- * GET /api/v1
- * @summary This is the summary or description of the endpoint
- * @return {string} 200 - success response
- */
+
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/collection", collectionRoute);
 app.use("/api/v1/campaign", campaignRouter);
