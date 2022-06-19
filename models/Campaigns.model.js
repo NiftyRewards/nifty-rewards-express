@@ -60,6 +60,30 @@ const Rewards = require("./Rewards.model");
  * @property {array<CampaignMerchantSummary>} data.required - List of Campaign Merchant Summary
  */
 
+/**
+ * Campaign Pause Payload
+ * @typedef {object} CampaignPausePayload
+ * @property {bool} campaignId.required - Id of the Campaign
+ */
+
+/**
+ * Campaign Pause Response
+ * @typedef {object} CampaignPauseResponse
+ * @property {string} message.required - Message of the response
+ */
+
+/**
+ * Campaign Unpause Payload
+ * @typedef {object} CampaignUnpausePayload
+ * @property {string} campaignId.required - Id of the Campaign
+ */
+
+/**
+ * Campaign Unpause Response
+ * @typedef {object} CampaignUnpauseResponse
+ * @property {string} message.required - Message of the response
+ */
+
 const campaignsSchema = new mongoose.Schema({
   merchantId: { type: mongoose.Schema.Types.ObjectId, required: true },
   collectionIdentifier: { type: String, required: true },
