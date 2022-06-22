@@ -4,6 +4,7 @@ const Rewards = require("./Rewards.model");
 /**
  * Campaign
  * @typedef {object} Campaign
+ * @property {string} id.required - Unique Id of the campaign
  * @property {string} merchantId.required - Unique Id of the merchant
  * @property {string} collectionIdentifier.required - Collection Identifier (chainId-collectionAddress)
  * @property {string} title.required - Title of the campaign
@@ -22,8 +23,22 @@ const Rewards = require("./Rewards.model");
  * @property {string} description.required - Description of Campaign
  * @property {string} startDate.required - Start Date of Campaign
  * @property {string} endDate.required - End Date of Campaign
- * @property {[string]} affectedTokens - Token Ids eligible for campaign
+ * @property {array<string>} affectedTokens - Token Ids eligible for campaign
  * @property {string} redemptionCount - Number of times a reward can be redeemed
+ */
+
+/**
+ * Campaign Start Response
+ * @typedef {object} CampaignStartResponse
+ * @property {string} message.required - Response Message
+ * @property {array<Campaign>} data.required - Campaign Details
+ */
+
+/**
+ * Campaign Eligible Response
+ * @typedef {object} CampaignEligibleResponse
+ * @property {string} message.required - Response Message
+ * @property {array<Campaign>} data.required - Campaign Details
  */
 
 /**
@@ -42,7 +57,31 @@ const Rewards = require("./Rewards.model");
  * Campaign Merchant Summary Response
  * @typedef {object} CampaignMerchantSummaryResponse
  * @property {string} message.required - Message of the response
- * @property {[CampaignMerchantSummary]} data.required - List of Campaign Merchant Summary
+ * @property {array<CampaignMerchantSummary>} data.required - List of Campaign Merchant Summary
+ */
+
+/**
+ * Campaign Pause Payload
+ * @typedef {object} CampaignPausePayload
+ * @property {bool} campaignId.required - Id of the Campaign
+ */
+
+/**
+ * Campaign Pause Response
+ * @typedef {object} CampaignPauseResponse
+ * @property {string} message.required - Message of the response
+ */
+
+/**
+ * Campaign Unpause Payload
+ * @typedef {object} CampaignUnpausePayload
+ * @property {string} campaignId.required - Id of the Campaign
+ */
+
+/**
+ * Campaign Unpause Response
+ * @typedef {object} CampaignUnpauseResponse
+ * @property {string} message.required - Message of the response
  */
 
 const campaignsSchema = new mongoose.Schema({
@@ -52,6 +91,7 @@ const campaignsSchema = new mongoose.Schema({
   description: { type: String, required: true },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
+  paused: { type: Boolean, required: true, default: false },
   // rewards: { type: [Rewards.schema], required: true },
 });
 

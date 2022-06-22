@@ -7,6 +7,14 @@ const mongoose = require("mongoose");
  */
 
 /**
+ * Merchant Create Payload
+ * @typedef {object} MerchantCreatePayload
+ * @property {string} address.required - Merchant Address
+ * @property {string} name.required - Merchant Name
+ * @property {string} description.required - Merchant Description
+ */
+
+/**
  * Merchant
  * @typedef {object} Merchant
  * @property {string} address.required - Wallet address of the merchant
