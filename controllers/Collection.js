@@ -150,7 +150,13 @@ exports.getCollection = async (req, res, next) => {
     } else {
       collection = await Collection.find(
         {},
-        { collectionId: 1, name: 1, totalSupply: 1 }
+        {
+          collectionId: 1,
+          name: 1,
+          totalSupply: 1,
+          collectionAddress: 1,
+          chain: 1,
+        }
       );
     }
   } catch (error) {
