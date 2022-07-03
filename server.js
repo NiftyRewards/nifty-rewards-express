@@ -67,7 +67,10 @@ const app = express();
 
 app.use(express.json());
 
-let whitelistOrigins = ['http://staging.niftyr3wrds.com'];
+let whitelistOrigins = [
+  'http://staging.niftyr3wrds.com',
+  'http://localhost:3000',
+];
 
 let corsOptions = {
   origin: whitelistOrigins,
