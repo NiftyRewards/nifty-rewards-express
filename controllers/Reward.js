@@ -46,7 +46,7 @@ exports.getRewards = async (req, res, next) => {
 
   return res.status(200).json({
     message: "Rewards retrieved",
-    rewards
+    rewards,
   });
 };
 
@@ -57,7 +57,7 @@ exports.getRewards = async (req, res, next) => {
  * @tags Rewards
  * @param {string} address.required - Address of the user account
  * @param {string} campaignId.required - Campaign Id to redeem rewards from
- * @param {string} campaignId.required - NFT Token Id
+ * @param {string} tokenId.required - NFT Token Id
  * @return {object} 200 - Success Response - application/json
  * @example response - 200 - Successful Redemption of reward
  * {
