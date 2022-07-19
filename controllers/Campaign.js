@@ -341,3 +341,78 @@ exports.getMerchantCampaigns = async (req, res, next) => {
     data: campaigns,
   });
 };
+
+/**
+ * PUT /api/v1/campaign/pause
+ * @summary Pause a Campaign
+ * @tags Campaign
+ * @description Set campaign's status to paused
+ * @param {CampaignPausePayload} request.body.required - Merchant address - (e.g. 0xc1C9D88A4E58B5E395675ded16960Ffca265bA52)
+ * @return {CampaignPauseResponse} 200 - Success response - application/json
+ * @return {DefaultErrorResponse} 400 - Bad request response
+ */
+
+exports.pauseCampaign = async (req, res, next) => {
+  let { campaignId } = req.body;
+  let campaign;
+
+  try {
+    campaign = await Campaign.findById(campaignId);
+  } catch (error) {
+    return res.status(400).json({
+      message: "Invalid Request",
+      error: error,
+    });
+  }
+
+  if (!campaign) {
+    return res.status(400).json({
+      message: "Campaign not found",
+    });
+  }
+
+  campaign.status = "paused";
+  await campaign.save();
+
+  return res.status(200).json({
+    message: "Campaign Paused",
+    data: campaign,
+  });
+};
+/**
+ * PUT /api/v1/campaign/unpause
+ * @summary Get campaigns by a merchant
+ * @tags Campaign
+ * @description Get merchant's campaigns to populate on the merchant dashboard
+ * @param {CampaignUnpausePayload} request.body.required - Merchant address - (e.g. 0xc1C9D88A4E58B5E395675ded16960Ffca265bA52)
+ * @return {CampaignUnpauseResponse} 200 - Success response - application/json
+ * @return {DefaultErrorResponse} 400 - Bad request response
+ */
+
+exports.unpauseCampaign = async (req, res, next) => {
+  let { campaignId } = req.body;
+  let campaign;
+
+  try {
+    campaign = await Campaign.findById(campaignId);
+  } catch (error) {
+    return res.status(400).json({
+      message: "Invalid Request",
+      error: error,
+    });
+  }
+
+  if (!campaign) {
+    return res.status(400).json({
+      message: "Campaign not found",
+    });
+  }
+
+  campaign.status = "active";
+  await campaign.save();
+
+  return res.status(200).json({
+    message: "Campaign Unpaused",
+    data: campaign,
+  });
+};

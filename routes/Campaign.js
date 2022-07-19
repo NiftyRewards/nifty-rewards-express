@@ -21,7 +21,7 @@ router.route("/edit").put(editCampaign);
 router.route("/approve").put(approveCampaign);
 router.route("/eligible").get(getEligibleCampaigns);
 router.route("/merchant").get(getMerchantCampaigns);
-// router.route("/pause").put(pauseCampaign);
-// router.route("/unpause").put(unpauseCampaign);
+router.route("/pause").put(pauseCampaign);
+router.route("/unpause").put(unpauseCampaign);
 
 module.exports = router;
