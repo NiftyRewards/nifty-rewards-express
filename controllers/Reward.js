@@ -58,12 +58,12 @@ exports.getRewards = async (req, res, next) => {
  * @param {string} address.required - Address of the user account
  * @param {string} campaignId.required - Campaign Id to redeem rewards from
  * @param {string} tokenId.required - NFT Token Id
- * @return {object} 200 - Success Response - application/json
+ * @return {RewardRedeemedResponse} 200 - Success Response - application/json
  * @example response - 200 - Successful Redemption of reward
  * {
  *   "message": "Reward redeemed"
  * }
- * @return {object} 400 - Bad request response
+ * @return {DefaultErrorResponse} 400 - Bad request response
  * @example response - 400 - Invalid userAddress
  * {
  *   "message": "Invalid address"
