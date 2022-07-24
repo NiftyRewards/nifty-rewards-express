@@ -85,7 +85,7 @@ exports.getMerchants = async (req, res, next) => {
  * GET /api/v1/merchant
  * @summary Get a single merchant based on address
  * @tags Merchant
- * @param {string} address.query.required - Merchant Address
+ * @param {string} address.query - Merchant Address
  * @description Get a single merchant based on address
  * @return {object} 200 - Success response
  * @example response - 200 - Successful retrieval of Merchants
@@ -100,7 +100,7 @@ exports.getMerchants = async (req, res, next) => {
  * }
  */
 exports.getMerchant = async (req, res, next) => {
-  const { address } = req.params;
+  const { address } = req.query;
   let merchants;
   console.log("🚀 | exports.getMerchant= | address", address);
   try {
