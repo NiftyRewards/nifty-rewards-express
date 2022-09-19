@@ -274,6 +274,23 @@ exports.getCampaign = async (req, res, next) => {
     });
   }
 
+  // Aggregate rewards left
+  let quantity = 0;
+  try {
+    console.log(
+      await Reward.aggregate([
+        { $match: { campaignId: campaignId } },
+        { $group: { _id: null, quantity: { $sum: "$quantity" } } },
+      ])
+    );
+  } catch (error) {
+    console.log("🚀 | exports.getCampaign= | error", error);
+    return res.status(400).json({
+      message: "Invalid Request",
+      error: error,
+    });
+  }
+  console.log("🚀 | exports.getCampaign= | quantity", quantity);
   if (!campaigns) {
     return res.status(200).json({
       message: "No Campaigns",
