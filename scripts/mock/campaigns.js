@@ -22,6 +22,8 @@ async function main() {
     "0xED5AF388653567Af2F388E6224dC7C4b3241C544", // Azuki
     "0x1A92f7381B9F03921564a437210bB9396471050C", // CoolCats
     "0xd2F668a8461D6761115dAF8Aeb3cDf5F40C532C6", // Karafuru
+    "0x75E9Abc7E69fc46177d2F3538C0B92d89054eC91", // Test 1
+    "0x165a2eD732eb15B54b5E8C057CbcE6251370D6e8", // Test 2
   ];
 
   // Generate and insert 10 Campaigns under merchantAddress
@@ -34,7 +36,7 @@ async function main() {
       title: `Test Campaign ${i}`,
       description: `Test Campaign Description ${i}`,
       startDate: "2022-01-01",
-      endDate: "2022-08-01",
+      endDate: "2022-12-01",
       redemptionCount: "1",
     });
   }

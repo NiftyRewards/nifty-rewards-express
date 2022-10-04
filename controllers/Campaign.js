@@ -110,6 +110,7 @@ exports.startCampaign = async (req, res, next) => {
       description: description,
       startDate: startDate,
       endDate: endDate,
+      status: "active",
     });
 
     // Add Campaign to Merchant
@@ -117,6 +118,7 @@ exports.startCampaign = async (req, res, next) => {
       $push: { campaigns: campaign._id },
     });
   } catch (err) {
+    console.log("🚀 | exports.startCampaign= | err", err);
     return res.status(400).json({
       error: "Error Creating Campaign",
     });

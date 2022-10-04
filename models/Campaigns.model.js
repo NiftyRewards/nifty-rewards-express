@@ -96,7 +96,7 @@ const campaignsSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ["paused", "active", "pending"],
-    default: false,
+    default: "pending",
   },
   // rewards: { type: [Rewards.schema], required: true },
 });
