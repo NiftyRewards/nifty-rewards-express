@@ -6,7 +6,7 @@ const Rewards = require("./Rewards.model");
  * @typedef {object} Campaign
  * @property {string} _id.required - Unique Id of the campaign
  * @property {string} merchantId.required - Unique Id of the merchant
- * @property {string} collectionIdentifier.required - Collection Identifier (chainId-collectionAddress)
+ * @property {array<string>} collectionIdentifiers.required - Collection Identifier (chainId-collectionAddress)
  * @property {string} title.required - Title of the campaign
  * @property {string} description.required - Description of the campaign
  * @property {string} startDate.required - UNIX timestamp of the start of the campaign
@@ -18,8 +18,8 @@ const Rewards = require("./Rewards.model");
  * Campaign Start Payload
  * @typedef {object} CampaignStartPayload
  * @property {string} merchantAddress.required - Address of the Merchant
- * @property {string} collectionAddress.required - Address of the Collection
- * @property {string} chain.required - Chain Id
+ * @property {array<string>} collectionAddress.required - Address of the Collections
+ * @property {array<string>} chain.required - Chain Ids of the Collections
  * @property {string} title.required - Title of Campaign
  * @property {string} description.required - Description of Campaign
  * @property {string} startDate.required - Start Date of Campaign
@@ -87,7 +87,7 @@ const Rewards = require("./Rewards.model");
 
 const campaignsSchema = new mongoose.Schema({
   merchantId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  collectionIdentifier: { type: String, required: true },
+  collectionIdentifiers: { type: [String], required: true },
   title: { type: String, required: true },
   description: { type: String, required: true },
   startDate: { type: Date, required: true },

@@ -41,7 +41,7 @@ const AddressWithChain = new mongoose.Schema({
  */
 const userSchema = new mongoose.Schema({
   address: { type: String, required: true },
-  boundedAddresses: { type: [AddressWithChain], required: true },
+  boundedAddresses: { type: [AddressWithChain] },
   accountType: { type: String, default: "basic" },
   nftsCache: { type: [NFTMetadata] },
   cacheLastUpdated: { type: Date },

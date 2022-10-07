@@ -1,8 +1,30 @@
 const ethers = require("ethers");
-
+const { chains } = require("../utils/chains");
+const axios = require("axios");
 const User = require("../models/Users.model");
 const Reward = require("../models/Rewards.model");
 const Campaign = require("../models/Campaigns.model");
+
+/**
+ * @description Get NFTS from Tatum
+ * @param {*} chain (ETH)
+ * @param {*} address
+ * @returns
+ */
+async function isHolder(chain, contractAddress, address) {
+  const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
+  let resp;
+  try {
+    resp = await axios.get(
+      `https://eth-mainnet.g.alchemy.com/nft/v2/${ALCHEMY_API_KEY}/isHolderOfCollection`,
+
+      { params: { wallet: address, contractAddress: contractAddress } }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+  return resp.data;
+}
 
 /**
  * GET /api/v1/rewards
@@ -53,11 +75,10 @@ exports.getRewards = async (req, res, next) => {
 /**
  * PUT /api/v1/redeem
  * @summary Redeem reward
- * @description Redeem reward specified by campaign Id and token Id, that belongs to userAddress
+ * @description Redeem reward specified by campaign Id that belongs to userAddress, and returns a unique code
  * @tags Rewards
  * @param {string} address.required - Address of the user account
  * @param {string} campaignId.required - Campaign Id to redeem rewards from
- * @param {string} tokenId.required - NFT Token Id
  * @return {RewardRedeemedResponse} 200 - Success Response - application/json
  * @example response - 200 - Successful Redemption of reward
  * {
@@ -91,7 +112,7 @@ exports.getRewards = async (req, res, next) => {
  *
  */
 exports.redeemReward = async (req, res, next) => {
-  let { userAddress, campaignId, tokenId } = req.body;
+  let { userAddress, campaignId } = req.body;
   console.log("🚀 | exports.redeemReward= | userAddress", userAddress);
 
   // Check if valid address
@@ -104,15 +125,53 @@ exports.redeemReward = async (req, res, next) => {
     });
   }
 
+  // Check if user has nft
+  let campaign = await Campaign.findOne({ _id: campaignId });
+  let collectionIdentifiers;
+  if (!campaign) {
+    return res.status(400).json({
+      message: "Campaign not found",
+    });
+  } else {
+    collectionIdentifiers = campaign.collectionIdentifiers;
+  }
+  console.log(
+    "🚀 | exports.redeemReward= | collectionIdentifiers",
+    collectionIdentifiers
+  );
+
+  collectionIdentifiers = collectionIdentifiers.map((collection) => {
+    return collection.split("-");
+  });
+  console.log(
+    "🚀 | collectionIdentifiers=collectionIdentifiers.map | collectionIdentifiers",
+    collectionIdentifiers
+  );
+
+  let hasNFT = false;
+
+  for (let collection of collectionIdentifiers) {
+    let { isHolderOfCollection } = await isHolder(
+      collection[0],
+      collection[1],
+      userAddress
+    );
+    if (isHolderOfCollection) {
+      hasNFT = true;
+      break;
+    }
+  }
+
+  if (!hasNFT) {
+    return res.status(400).json({
+      message: "User does not own reward",
+    });
+  }
+
   // Find Reward with reward_id and address
   let reward = await Reward.findOne({
     campaignId: campaignId,
-    token_id: tokenId,
   });
-  console.log(
-    "🚀 | exports.redeemReward= | reward",
-    String(reward.collectionIdentifier).toLowerCase()
-  );
 
   // Check if reward exists
   if (!reward) {
@@ -121,16 +180,9 @@ exports.redeemReward = async (req, res, next) => {
     });
   }
 
-  // Check if reward is already redeemed
-  if (reward.quantity === 0) {
-    return res.status(400).json({
-      message: "Reward already fully redeemed",
-    });
-  }
-
-  let campaign = await Campaign.findOne({ _id: reward.campaignId });
-  console.log("🚀 | exports.redeemReward= | campaign", campaign.start_date);
-  console.log("🚀 | exports.redeemReward= | campaign", campaign.end_date);
+  let code = reward.availableCodes.pop();
+  console.log("🚀 | exports.redeemReward= | code", code);
+  await reward.save();
 
   // Check if reward is started
   if (Date.now() < campaign.start_date) {
@@ -146,32 +198,13 @@ exports.redeemReward = async (req, res, next) => {
     });
   }
 
-  // Check if user is the owner of the reward
-  let user_cache = await User.findOne(
-    {
-      address: userAddress,
-      "nfts_cache.contractIdentifier": {
-        $eq: String(reward.collectionIdentifier).toLowerCase(),
-      },
-      "nfts_cache.balances": { $eq: tokenId },
-    },
-    {
-      "nfts_cache.$": 1,
-    }
-  );
-  console.log("🚀 | exports.redeemReward= | user_cache", user_cache);
-
-  if (!user_cache) {
-    return res.status(400).json({
-      message: "User does not own reward",
-    });
-  }
   // Redeem reward
-  reward.quantity -= 1;
-  reward.quantity_used += 1;
-  await reward.save();
+  // reward.quantity -= 1;
+  // reward.quantity_used += 1;
+  // await reward.save();
 
   return res.status(200).json({
     message: "Reward redeemed",
+    code: code,
   });
 };
