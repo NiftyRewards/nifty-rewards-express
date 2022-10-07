@@ -10,7 +10,11 @@ require("dotenv").config();
 jest.setTimeout(30000);
 
 const AZUKI_CONTRACT_ADDRESS = "0xED5AF388653567Af2F388E6224dC7C4b3241C544";
+
+const TEST_CONTRACT_1 = "0x75E9Abc7E69fc46177d2F3538C0B92d89054eC91"; // Test 1
+const TEST_CONTRACT_2 = "0x165a2eD732eb15B54b5E8C057CbcE6251370D6e8"; // Test 2
 const MERCHANT_ADDRESS = "0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7";
+
 describe("Campaign", () => {
   beforeAll(async () => {
     // Remove all data that was added during tests
@@ -38,12 +42,12 @@ describe("Campaign", () => {
       .set("Content-Type", "application/json")
       .send({
         merchantAddress: MERCHANT_ADDRESS,
-        collectionAddress: AZUKI_CONTRACT_ADDRESS,
-        chainId: "1",
+        collectionAddresses: [TEST_CONTRACT_1, TEST_CONTRACT_2],
+        chainIds: ["1", "1"],
         title: "Test Campaign",
         description: "Test Campaign Description",
         startDate: "2022-01-01",
-        endDate: "2022-06-01",
+        endDate: "2022-12-01",
         redemptionCount: "1",
       }); // TODO
     console.log("🚀 | test | response", response._body);

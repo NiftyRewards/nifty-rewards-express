@@ -6,6 +6,7 @@ const Reward = require("../models/Rewards.model");
 const axios = require("axios");
 const ethers = require("ethers");
 const { chains } = require("../utils/chains");
+const randomstring = require("randomstring");
 /**
  * @description Get List of collection identifiers
  * @param {*} nfts_cache
@@ -30,8 +31,8 @@ function getCollectionIdentifiers(nfts_cache) {
  * @example request - CampaignStartPayload
  * {
  *  "merchantAddress": "0xc1C9D88A4E58B5E395675ded16960Ffca265bA52",
- *  "collectionAddress": "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
- *  "chainId": "1",
+ *  "collectionAddresses": ["0x165a2eD732eb15B54b5E8C057CbcE6251370D6e8","0x75E9Abc7E69fc46177d2F3538C0B92d89054eC91"],
+ *  "chainIds": ["1","1"],
  *  "title": "Campaign Title",
  *  "description": "Campaign Description",
  *  "startDate": "2020-01-01",
@@ -41,8 +42,8 @@ function getCollectionIdentifiers(nfts_cache) {
  * @example request - CampaignStartPayload with affectedTokens
  * {
  *  "merchantAddress": "0xc1C9D88A4E58B5E395675ded16960Ffca265bA52",
- *  "collectionAddress": "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
- *  "chainId": "1",
+ *  "collectionAddresses": ["0xED5AF388653567Af2F388E6224dC7C4b3241C544"],
+ *  "chainIds": ["1"],
  *  "title": "Campaign Title",
  *  "description": "Campaign Description",
  *  "startDate": "2020-01-01",
@@ -56,8 +57,8 @@ function getCollectionIdentifiers(nfts_cache) {
 exports.startCampaign = async (req, res, next) => {
   let {
     merchantAddress,
-    collectionAddress,
-    chainId,
+    collectionAddresses,
+    chainIds,
     title,
     description,
     startDate,
@@ -73,7 +74,10 @@ exports.startCampaign = async (req, res, next) => {
   // Check if valid address
   try {
     merchantAddress = ethers.utils.getAddress(merchantAddress);
-    collectionAddress = ethers.utils.getAddress(collectionAddress);
+
+    collectionAddresses = collectionAddresses.map((address) =>
+      ethers.utils.getAddress(address)
+    );
   } catch (error) {
     return res.status(400).json({
       error: "Invalid address",
@@ -90,22 +94,24 @@ exports.startCampaign = async (req, res, next) => {
     });
   }
   // Check if collection exists
-  let collectionIdentifier = `${chainId}-${collectionAddress}`;
-  let collection = await Collection.findOne({
-    collectionIdentifier: collectionIdentifier,
-  });
-  if (!collection) {
-    return res.status(400).json({
-      error: "Collection not found",
-    });
+  let collectionIdentifiers = [];
+  for (let i = 0; i < collectionAddresses.length; i++) {
+    collectionIdentifiers.push(`${chainIds[i]}-${collectionAddresses[i]}`);
+    // let collection = await Collection.findOne({
+    //   collectionIdentifier: collectionIdentifier,
+    // });
+    // if (!collection) {
+    //   return res.status(400).json({
+    //     error: "Collection not found",
+    //   });
+    // }
   }
-
   // Create Campaign
   let campaign;
   try {
     campaign = await Campaign.create({
       merchantId: merchant._id,
-      collectionIdentifier: collection.collectionIdentifier,
+      collectionIdentifiers: collectionIdentifiers,
       title: title,
       description: description,
       startDate: startDate,
@@ -124,32 +130,40 @@ exports.startCampaign = async (req, res, next) => {
     });
   }
 
+  // No longer create rewards for individual tokens (FCFS)
   // Create Rewards (Multiple)
+  let codes = [];
+  for (let i = 0; i < redemptionCount; i++) {
+    codes.push(randomstring.generate(6));
+  }
   try {
-    let tokenIds;
-    // Generate Rewards
-    // Rewards Apply to all tokens in the collection
-    if (affectedTokens === "all" || !affectedTokens) {
-      // Get list of token ids in collection
-      tokenIds = collection.cache.map((token) => {
-        return token.tokenId;
-      });
-    } else {
-      tokenIds = affectedTokens;
-    }
+    //   let tokenIds;
+    //   // Generate Rewards
+    //   // Rewards Apply to all tokens in the collection
+    //   if (affectedTokens === "all" || !affectedTokens) {
+    //     // Get list of token ids in collection
+    //     tokenIds = collection.cache.map((token) => {
+    //       return token.tokenId;
+    //     });
+    //   } else {
+    //     tokenIds = affectedTokens;
+    //   }
 
-    tokenIds = tokenIds.map((tokenId) => {
-      return {
-        campaignId: campaign._id,
-        collectionIdentifier: collectionIdentifier,
-        collectionAddress: collectionAddress,
-        chain: chainId,
-        tokenId: tokenId,
-        quantity: redemptionCount,
-      };
+    //   tokenIds = tokenIds.map((tokenId) => {
+    //     return {
+    //       campaignId: campaign._id,
+    //       collectionIdentifier: collectionIdentifier,
+    //       collectionAddress: collectionAddress,
+    //       chain: chainId,
+    //       tokenId: tokenId,
+    //       quantity: redemptionCount,
+    //     };
+    //   });
+
+    let rewards = await Reward.create({
+      campaignId: campaign._id,
+      availableCodes: codes,
     });
-
-    let rewards = await Reward.create(tokenIds);
   } catch (error) {
     return res.status(400).json({
       message: "Invalid reward data",
@@ -162,7 +176,7 @@ exports.startCampaign = async (req, res, next) => {
     data: {
       id: campaign._id,
       merchantId: campaign.merchantId,
-      collectionIdentifier: campaign.collectionIdentifier,
+      collectionIdentifiers: campaign.collectionIdentifiers,
       title: campaign.title,
       description: campaign.description,
       startDate: campaign.startDate,
