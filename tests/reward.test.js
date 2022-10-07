@@ -4,10 +4,10 @@ const mongoose = require("mongoose");
 
 const RewardsModel = require("../models/Rewards.model");
 const CampaignsModel = require("../models/Campaigns.model");
+const UsersModel = require("../models/Users.model");
 const randomstring = require("randomstring");
 
 const AZUKI_CONTRACT_ADDRESS = "0xED5AF388653567Af2F388E6224dC7C4b3241C544";
-const USER_ADDRESS = "0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7";
 // const CAMPAIGN_ID = "6292c999356b5485c892eb2f";
 const CAMPAIGN_ID = new mongoose.mongo.ObjectId("6292c999356b5485c892eb2f");
 const MERCHANT_ID = new mongoose.mongo.ObjectId("56cb91bdc3464f14678934ca");
@@ -16,6 +16,7 @@ const COLLECTION_IDENTIFIERS = [
   "1-0x165a2eD732eb15B54b5E8C057CbcE6251370D6e8",
 ];
 
+const USER_ADDRESS = "0xA63dDdB69E6e470Bf3d236B434EF80a213B998A7";
 const TESTER_ADDRESS = "0x0103a4966daba5a947df52b0B892d8b3fdEF5A4F";
 
 const TOKEN_ID = 7121;
@@ -53,6 +54,20 @@ describe("Reward", () => {
         $set: {
           campaignId: CAMPAIGN_ID,
           availableCodes: codes,
+        },
+      },
+      { upsert: true }
+    );
+
+    await UsersModel.findOneAndUpdate(
+      { address: USER_ADDRESS },
+      {
+        $set: {
+          address: USER_ADDRESS,
+          boundedAddresses: [{ address: TESTER_ADDRESS, chain: "1" }],
+          accountType: "basic",
+          nftsCache: [],
+          cacheLastUpdated: "2022-01-01",
         },
       },
       { upsert: true }
@@ -122,7 +137,7 @@ describe("Reward", () => {
 
   test("Redeem Reward", async () => {
     const response = await request(app).put(`/api/v1/reward/redeem`).send({
-      userAddress: TESTER_ADDRESS,
+      userAddress: USER_ADDRESS,
       campaignId: CAMPAIGN_ID,
       tokenId: TOKEN_ID,
     });

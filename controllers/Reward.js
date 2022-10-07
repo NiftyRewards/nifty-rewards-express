@@ -1,7 +1,7 @@
 const ethers = require("ethers");
 const { chains } = require("../utils/chains");
 const axios = require("axios");
-const User = require("../models/Users.model");
+const Users = require("../models/Users.model");
 const Reward = require("../models/Rewards.model");
 const Campaign = require("../models/Campaigns.model");
 
@@ -150,14 +150,31 @@ exports.redeemReward = async (req, res, next) => {
 
   let hasNFT = false;
 
+  let boundedAddresses = (
+    await Users.findOne(
+      { address: userAddress },
+      { "boundedAddresses.address": 1 }
+    )
+  ).boundedAddresses.map((address) => address.address);
+
+  console.log(
+    "🚀 | exports.redeemReward= | boundedAddresses",
+    boundedAddresses
+  );
+
   for (let collection of collectionIdentifiers) {
-    let { isHolderOfCollection } = await isHolder(
-      collection[0],
-      collection[1],
-      userAddress
-    );
-    if (isHolderOfCollection) {
-      hasNFT = true;
+    for (let address of boundedAddresses) {
+      let { isHolderOfCollection } = await isHolder(
+        collection[0],
+        collection[1],
+        address
+      );
+      if (isHolderOfCollection) {
+        hasNFT = true;
+        break;
+      }
+    }
+    if (hasNFT) {
       break;
     }
   }
