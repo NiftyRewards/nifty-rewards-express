@@ -1,8 +1,8 @@
 const Campaign = require("../models/Campaigns.model");
 const Merchant = require("../models/Merchants.model");
+const Reward = require("../models/Rewards.model");
 const User = require("../models/Users.model");
 const Collection = require("../models/Collections.model");
-const Reward = require("../models/Rewards.model");
 const axios = require("axios");
 const ethers = require("ethers");
 const { chains } = require("../utils/chains");
@@ -33,23 +33,18 @@ function getCollectionIdentifiers(nfts_cache) {
  *  "merchantAddress": "0xc1C9D88A4E58B5E395675ded16960Ffca265bA52",
  *  "collectionAddresses": ["0x165a2eD732eb15B54b5E8C057CbcE6251370D6e8","0x75E9Abc7E69fc46177d2F3538C0B92d89054eC91"],
  *  "chainIds": ["1","1"],
- *  "title": "Campaign Title",
- *  "description": "Campaign Description",
+ *  "title": "NIKE CAMPAIGN",
+ *  "company": "Atmos",
+ *  "description": "10% off when you purchase any footwear on nike.com!",
+ *  "location": "nike.com",
+ *  "website": "www.nike.com",
+ *  "logoUrl": "https://www.nike.com/logo.png",
+ *  "bgUrl": "https://www.nike.com/bg.png",
+ *  "offers": ['10% Off footwear','30% Off apparels<br/>Free one month membership'],
+ *  "tnc": ['Limited to 1 redemption per user. Limited redemptions available for the period','Promo is valid from now until 30th June 2022 or redemption lasts, whichever is sooner','Applicable only for in-store purchases','Other Nike T&Cs apply'],
  *  "startDate": "2020-01-01",
  *  "endDate": "2020-08-01",
- *  "redemptionCount": "1"
- * }
- * @example request - CampaignStartPayload with affectedTokens
- * {
- *  "merchantAddress": "0xc1C9D88A4E58B5E395675ded16960Ffca265bA52",
- *  "collectionAddresses": ["0xED5AF388653567Af2F388E6224dC7C4b3241C544"],
- *  "chainIds": ["1"],
- *  "title": "Campaign Title",
- *  "description": "Campaign Description",
- *  "startDate": "2020-01-01",
- *  "endDate": "2020-08-01",
- *  "affectedTokens": [1, 2, 3, 4],
- *  "redemptionCount": "1"
+ *  "redemptionCount": "500"
  * }
  * @return {CampaignStartResponse} 200 - success response - application/json
  * @return {DefaultErrorResponse} 400 - Bad request response
@@ -60,7 +55,14 @@ exports.startCampaign = async (req, res, next) => {
     collectionAddresses,
     chainIds,
     title,
+    company,
+    companyLogoUrl,
+    offers,
+    bgUrl,
+    location,
+    website,
     description,
+    tnc,
     startDate,
     endDate,
     affectedTokens,
@@ -111,12 +113,22 @@ exports.startCampaign = async (req, res, next) => {
   try {
     campaign = await Campaign.create({
       merchantId: merchant._id,
+      merchantAddress: merchantAddress,
       collectionIdentifiers: collectionIdentifiers,
       title: title,
+      company: company,
+      companyLogoUrl: companyLogoUrl,
+      offers: offers,
+      bgUrl: bgUrl,
+      location: location,
+      website: website,
       description: description,
+      tnc: tnc,
       startDate: startDate,
       endDate: endDate,
       status: "active",
+      totalCoupons: redemptionCount,
+      remaining: redemptionCount,
     });
 
     // Add Campaign to Merchant
@@ -290,22 +302,23 @@ exports.getCampaign = async (req, res, next) => {
     });
   }
 
-  // Aggregate rewards left
-  let quantity = 0;
-  try {
-    console.log(
-      await Reward.aggregate([
-        { $match: { campaignId: campaignId } },
-        { $group: { _id: null, quantity: { $sum: "$quantity" } } },
-      ])
-    );
-  } catch (error) {
-    console.log("🚀 | exports.getCampaign= | error", error);
-    return res.status(400).json({
-      message: "Invalid Request",
-      error: error,
-    });
-  }
+  // // Aggregate rewards left
+  // let quantity = 0;
+  // try {
+  //   console.log(
+  //     await Reward.aggregate([
+  //       { $match: { campaignId: campaignId } },
+  //       { $group: { _id: null, quantity: { $sum: "$quantity" } } },
+  //     ])
+  //   );
+  // } catch (error) {
+  //   console.log("🚀 | exports.getCampaign= | error", error);
+  //   return res.status(400).json({
+  //     message: "Invalid Request",
+  //     error: error,
+  //   });
+  // }
+
   console.log("🚀 | exports.getCampaign= | quantity", quantity);
   if (!campaigns) {
     return res.status(200).json({

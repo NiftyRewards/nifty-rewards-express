@@ -55,7 +55,7 @@ async function getNFTSfromTATUM(chain, address) {
  * }
  */
 exports.isBound = async (req, res, next) => {
-  let { address } = req.query;
+  let { address, addressToBind } = req.query;
 
   // Check if valid address
   try {

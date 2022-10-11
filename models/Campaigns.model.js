@@ -8,10 +8,18 @@ const Rewards = require("./Rewards.model");
  * @property {string} merchantId.required - Unique Id of the merchant
  * @property {array<string>} collectionIdentifiers.required - Collection Identifier (chainId-collectionAddress)
  * @property {string} title.required - Title of the campaign
+ * @property {string} company.required - Company of the campaign
+ * @property {string} companyLogoUrl.required - Logo URL of the campaign
+ * @property {string} location.required - Location of the campaign
+ * @property {string} website.required - Website of the campaign
+ * @property {string} offers.required - Offers of the campaign
+ * @property {[string]} tnc.required - Description of the campaign
  * @property {string} description.required - Description of the campaign
  * @property {string} startDate.required - UNIX timestamp of the start of the campaign
  * @property {string} endDate.required - UNIX timestamp of the end of the campaign
  * @property {string} paused.required - UPaused state of the campaign
+ * @property {string} quantityLeft.required - Status of the campaign
+ * @property {string} redeemed.required - Status of the campaign
  */
 
 /**
@@ -87,9 +95,18 @@ const Rewards = require("./Rewards.model");
 
 const campaignsSchema = new mongoose.Schema({
   merchantId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  merchantAddress: { type: String, required: true },
   collectionIdentifiers: { type: [String], required: true },
   title: { type: String, required: true },
+  company: { type: String, required: true },
+  companyLogoUrl: { type: String, required: true },
+  offers: { type: String, required: true },
   description: { type: String, required: true },
+  bgUrl: { type: String, required: true },
+  location: { type: String, required: true },
+  website: { type: String, required: true },
+  descriptions: { type: [String], required: true },
+  tnc: { type: [String], required: true },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   status: {
@@ -98,6 +115,8 @@ const campaignsSchema = new mongoose.Schema({
     enum: ["paused", "active", "pending"],
     default: "pending",
   },
+  totalCoupon: { type: Number, required: true },
+  remaining: { type: Number },
   // rewards: { type: [Rewards.schema], required: true },
 });
 

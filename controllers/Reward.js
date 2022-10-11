@@ -198,8 +198,8 @@ exports.redeemReward = async (req, res, next) => {
   }
 
   let code = reward.availableCodes.pop();
-  console.log("🚀 | exports.redeemReward= | code", code);
-  await reward.save();
+  campaign.remaining -= 1;
+  await campaign.save();
 
   // Check if reward is started
   if (Date.now() < campaign.start_date) {

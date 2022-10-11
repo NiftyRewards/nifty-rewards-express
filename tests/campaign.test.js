@@ -44,11 +44,24 @@ describe("Campaign", () => {
         merchantAddress: MERCHANT_ADDRESS,
         collectionAddresses: [TEST_CONTRACT_1, TEST_CONTRACT_2],
         chainIds: ["1", "1"],
-        title: "Test Campaign",
-        description: "Test Campaign Description",
+        title: "NIKE",
+        description: "Mike Campaign",
+        company: "Nike",
+        companyLogoUrl:
+          "https://static.nike.com/a/images/f_jpg,q_auto:eco/61b4738b-e1e1-4786-8f6c-26aa0008e80b/swoosh-logo-black.png",
+        offer: "10% Off footwear",
+        description: "10% off when you purchase any footwear on nike.com!",
+        bgUrl:
+          "https://static.nike.com/a/images/f_jpg,q_auto:eco/61b4738b-e1e1-4786-8f6c-26aa0008e80b/swoosh-logo-black.png",
+        tnc: [
+          "Limited to 1 redemption per user. Limited redemptions available for the period",
+          "Promo is valid from now until 30th June 2022 or redemption lasts, whichever is sooner",
+          "Applicable only for in-store purchases",
+          "Other Nike T&Cs apply",
+        ],
         startDate: "2022-01-01",
         endDate: "2022-12-01",
-        redemptionCount: "1",
+        redemptionCount: "100",
       }); // TODO
     console.log("🚀 | test | response", response._body);
 
