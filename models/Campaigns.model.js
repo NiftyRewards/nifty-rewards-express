@@ -100,7 +100,7 @@ const campaignsSchema = new mongoose.Schema({
   title: { type: String, required: true },
   company: { type: String, required: true },
   companyLogoUrl: { type: String, required: true },
-  offers: { type: String, required: true },
+  offer: { type: String, required: true },
   description: { type: String, required: true },
   bgUrl: { type: String, required: true },
   location: { type: String, required: true },

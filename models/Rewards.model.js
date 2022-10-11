@@ -33,7 +33,7 @@ const mongoose = require("mongoose");
 const rewardsSchema = new mongoose.Schema({
   // merchant_id: { type: mongoose.Schema.Types.ObjectId, required: true },
   campaignId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  title: { type: String, required: true },
+  offer: { type: String, required: true },
   // collectionIdentifier: { type: String, required: true },
   // collectionAddress: { type: String, required: true },
   // chain: { type: String, required: true },

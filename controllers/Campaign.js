@@ -40,7 +40,7 @@ function getCollectionIdentifiers(nfts_cache) {
  *  "website": "www.nike.com",
  *  "logoUrl": "https://www.nike.com/logo.png",
  *  "bgUrl": "https://www.nike.com/bg.png",
- *  "offers": ['10% Off footwear','30% Off apparels<br/>Free one month membership'],
+ *  "offer": '10% Off footwear',
  *  "tnc": ['Limited to 1 redemption per user. Limited redemptions available for the period','Promo is valid from now until 30th June 2022 or redemption lasts, whichever is sooner','Applicable only for in-store purchases','Other Nike T&Cs apply'],
  *  "startDate": "2020-01-01",
  *  "endDate": "2020-08-01",
@@ -57,7 +57,7 @@ exports.startCampaign = async (req, res, next) => {
     title,
     company,
     companyLogoUrl,
-    offers,
+    offer,
     bgUrl,
     location,
     website,
@@ -118,7 +118,7 @@ exports.startCampaign = async (req, res, next) => {
       title: title,
       company: company,
       companyLogoUrl: companyLogoUrl,
-      offers: offers,
+      offer: offer,
       bgUrl: bgUrl,
       location: location,
       website: website,
@@ -127,7 +127,7 @@ exports.startCampaign = async (req, res, next) => {
       startDate: startDate,
       endDate: endDate,
       status: "active",
-      totalCoupons: redemptionCount,
+      totalCoupon: redemptionCount,
       remaining: redemptionCount,
     });
 
@@ -174,9 +174,11 @@ exports.startCampaign = async (req, res, next) => {
 
     let rewards = await Reward.create({
       campaignId: campaign._id,
+      offer: offer,
       availableCodes: codes,
     });
   } catch (error) {
+    console.log("🚀 | exports.startCampaign= | error", error);
     return res.status(400).json({
       message: "Invalid reward data",
       error: error,
