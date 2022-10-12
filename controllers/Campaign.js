@@ -321,7 +321,6 @@ exports.getCampaign = async (req, res, next) => {
   //   });
   // }
 
-  console.log("🚀 | exports.getCampaign= | quantity", quantity);
   if (!campaigns) {
     return res.status(200).json({
       message: "No Campaigns",
