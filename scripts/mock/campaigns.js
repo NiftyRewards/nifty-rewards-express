@@ -56,7 +56,6 @@ async function main() {
       "Other Nike T&Cs apply",
     ],
     location: "Singapore",
-
     startDate: "2022-01-01",
     endDate: "2022-12-01",
     redemptionCount: "100",
