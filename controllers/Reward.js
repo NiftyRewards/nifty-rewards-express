@@ -150,12 +150,14 @@ exports.redeemReward = async (req, res, next) => {
 
   let hasNFT = false;
 
-  let boundedAddresses = (
-    await Users.findOne(
-      { address: userAddress },
-      { "boundedAddresses.address": 1 }
-    )
-  ).boundedAddresses.map((address) => address.address);
+  let user = await Users.findOne(
+    { address: userAddress },
+    { "boundedAddresses.address": 1 }
+  );
+
+  let boundedAddresses = user.boundedAddresses.map(
+    (address) => address.address
+  );
 
   console.log(
     "🚀 | exports.redeemReward= | boundedAddresses",
@@ -181,7 +183,7 @@ exports.redeemReward = async (req, res, next) => {
 
   if (!hasNFT) {
     return res.status(400).json({
-      message: "User does not own reward",
+      message: "User does not own NFT",
     });
   }
 
@@ -197,8 +199,16 @@ exports.redeemReward = async (req, res, next) => {
     });
   }
 
-  let code = reward.availableCodes.pop();
+  // Check if user has already claimed reward
+  if (campaign.savedAddresses.includes(userAddress)) {
+    return res.status(400).json({
+      message: "Reward already redeemed",
+    });
+  }
+
+  let code = reward.availableCodes[0];
   campaign.remaining -= 1;
+  campaign.claimedAddresses.push(userAddress);
   await campaign.save();
 
   // Check if reward is started
@@ -216,6 +226,8 @@ exports.redeemReward = async (req, res, next) => {
   }
 
   // Redeem reward
+  user.claimedRewards.push(reward);
+  await user.save();
   // reward.quantity -= 1;
   // reward.quantity_used += 1;
   // await reward.save();
@@ -225,3 +237,111 @@ exports.redeemReward = async (req, res, next) => {
     code: code,
   });
 };
+
+// TODO: hasClaimed
+
+/**
+ * GET /api/v1/hasClaimed
+ * @summary Check if user has claimed a reward for a campaignId
+ * @description Check if user has claimed a reward for a campaignId
+ * @tags Rewards
+ * @param {string} address.required - Address of the user account
+ * @param {string} campaignId.required - Campaign Id to redeem rewards from
+ * @return {HasRedeemedResponse} 200 - Success Response - application/json
+ * @example response - 200 - Return true if user has claimed reward
+ * {
+ *   "hasClaimed": true,
+ *   "message": "Reward already redeemed"
+ * }
+ * @example response - 200 - Return false if user has claimed reward
+ * {
+ *   "hasClaimed": false,
+ *   "message": "Reward not redeemed"
+ * }
+ * @return {DefaultErrorResponse} 400 - Bad request response
+ * @example response - 400 - Invalid userAddress
+ * {
+ *   "message": "Invalid address"
+ * }
+ */
+exports.hasClaimed = async (req, res, next) => {
+  let { userAddress, campaignId } = req.body;
+
+  // Check if valid address
+  try {
+    userAddress = ethers.utils.getAddress(userAddress);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      message: "Invalid address",
+    });
+  }
+
+  let campaign = await Campaign.findOne({ _id: campaignId });
+
+  // Check if user has already claimed reward
+  if (campaign.savedAddresses.includes(userAddress)) {
+    return res.status(200).json({
+      hasClaimed: true,
+      message: "Reward already redeemed",
+    });
+  } else {
+    return res.status(200).json({
+      hasClaimed: false,
+      message: "Reward not redeemed",
+    });
+  }
+};
+
+// TODO: userRewards
+
+/**
+ * GET /api/v1/userRewards
+ * @summary View user's claimed rewards
+ * @description View user's claimed rewards
+ * @tags Rewards
+ * @param {string} address.required - Address of the user account
+ * @return {UserRewardsResponse} 200 - Success Response - application/json
+ * @example response - 200 - Return list of user rewards
+ * {
+ *   "address": "0x1234567890ABCDEF",
+ *   "rewards": []
+ * }
+ * @return {DefaultErrorResponse} 400 - Bad request response
+ * @example response - 400 - Invalid userAddress
+ * {
+ *   "message": "Invalid address"
+ * }
+ */
+exports.userRewards = async (req, res, next) => {
+  let { userAddress } = req.body;
+
+  // Check if valid address
+  try {
+    userAddress = ethers.utils.getAddress(userAddress);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      message: "Invalid address",
+    });
+  }
+
+  let user = await User.findOne(
+    { address: userAddress },
+    { claimedRewards: 1 }
+  );
+
+  if (!user) {
+    return res.status(400).json({
+      message: "User not found",
+    });
+  } else {
+    return res.status(200).json({
+      address: userAddress,
+      rewards: user.claimedRewards,
+    });
+  }
+};
+
+// TODO: Change to 1 code per brand
+// TODO: Change Mints left logic

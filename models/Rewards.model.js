@@ -30,6 +30,13 @@ const mongoose = require("mongoose");
  * @property {string} message.required - Message of the response
  */
 
+/**
+ * Has Redeemed Response
+ * @typedef {object} HasRedeemedResponse
+ * @property {boolean} hasClaimed.required - If reward was claimed
+ * @property {string} message.required - Message of the response
+ */
+
 const rewardsSchema = new mongoose.Schema({
   // merchant_id: { type: mongoose.Schema.Types.ObjectId, required: true },
   campaignId: { type: mongoose.Schema.Types.ObjectId, required: true },

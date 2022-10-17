@@ -45,6 +45,7 @@ const userSchema = new mongoose.Schema({
   accountType: { type: String, default: "basic" },
   nftsCache: { type: [NFTMetadata] },
   cacheLastUpdated: { type: Date },
+  claimedRewards: { type: [mongoose.Schema.Types.ObjectId] },
 });
 
 module.exports = mongoose.model("User", userSchema);

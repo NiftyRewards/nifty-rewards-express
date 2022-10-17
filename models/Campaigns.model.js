@@ -117,6 +117,8 @@ const campaignsSchema = new mongoose.Schema({
   },
   totalCoupon: { type: Number, required: true },
   remaining: { type: Number },
+  claimedAddresses: { type: [String] },
+
   // rewards: { type: [Rewards.schema], required: true },
 });
 
