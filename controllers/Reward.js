@@ -77,14 +77,27 @@ exports.getRewards = async (req, res, next) => {
  * @summary Redeem reward
  * @description Redeem reward specified by campaign Id that belongs to address, and returns a unique code
  * @tags Rewards
- * @param {string} address.required - Address of the user account
- * @param {string} campaignId.required - Campaign Id to redeem rewards from
+ * @param {RedeemRewardPayload} request.body.required
  * @return {RewardRedeemedResponse} 200 - Success Response - application/json
+ * @example request - User with NFT
+ * {
+ *  "address": "0x5672C4871b615AA45B090a790646cfC8305beDdf",
+ *  "campaignId": "634edeb933c51b380a150014"
+ * }
+ * @example request - User without NFT
+ * {
+ *  "address": "0xE7B43e7cd453162E8c6f894b2a2Bc33d0521e3aa",
+ *  "campaignId": "634edeb933c51b380a150014"
+ * }
  * @example response - 200 - Successful Redemption of reward
  * {
  *   "message": "Reward redeemed"
  * }
  * @return {DefaultErrorResponse} 400 - Bad request response
+ * @example response - 400 - Invalid user
+ * {
+ *   "message": "Invalid address"
+ * }
  * @example response - 400 - Invalid address
  * {
  *   "message": "Invalid address"
@@ -155,6 +168,12 @@ exports.redeemReward = async (req, res, next) => {
     { "boundedAddresses.address": 1 }
   );
 
+  if (!user) {
+    return res.status(400).json({
+      message: "User not found",
+    });
+  }
+
   let boundedAddresses = user.boundedAddresses.map(
     (address) => address.address
   );
@@ -199,8 +218,9 @@ exports.redeemReward = async (req, res, next) => {
     });
   }
 
+  console.log("🚀 | exports.redeemReward= | campaign", campaign);
   // Check if user has already claimed reward
-  if (campaign.savedAddresses.includes(address)) {
+  if (campaign.claimedAddresses.includes(address)) {
     return res.status(400).json({
       message: "Reward already redeemed",
     });
