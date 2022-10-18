@@ -314,7 +314,7 @@ exports.hasClaimed = async (req, res, next) => {
  * }
  */
 exports.userRewards = async (req, res, next) => {
-  let { address } = req.body;
+  let { address } = req.query;
 
   // Check if valid address
   try {
@@ -326,7 +326,7 @@ exports.userRewards = async (req, res, next) => {
     });
   }
 
-  let user = await User.findOne({ address: address }, { claimedRewards: 1 });
+  let user = await Users.findOne({ address: address }, { claimedRewards: 1 });
 
   if (!user) {
     return res.status(400).json({
