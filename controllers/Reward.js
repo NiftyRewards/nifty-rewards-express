@@ -75,7 +75,7 @@ exports.getRewards = async (req, res, next) => {
 /**
  * PUT /api/v1/reward/redeem
  * @summary Redeem reward
- * @description Redeem reward specified by campaign Id that belongs to userAddress, and returns a unique code
+ * @description Redeem reward specified by campaign Id that belongs to address, and returns a unique code
  * @tags Rewards
  * @param {string} address.required - Address of the user account
  * @param {string} campaignId.required - Campaign Id to redeem rewards from
@@ -85,7 +85,7 @@ exports.getRewards = async (req, res, next) => {
  *   "message": "Reward redeemed"
  * }
  * @return {DefaultErrorResponse} 400 - Bad request response
- * @example response - 400 - Invalid userAddress
+ * @example response - 400 - Invalid address
  * {
  *   "message": "Invalid address"
  * }
@@ -112,12 +112,12 @@ exports.getRewards = async (req, res, next) => {
  *
  */
 exports.redeemReward = async (req, res, next) => {
-  let { userAddress, campaignId } = req.body;
-  console.log("🚀 | exports.redeemReward= | userAddress", userAddress);
+  let { address, campaignId } = req.body;
+  console.log("🚀 | exports.redeemReward= | address", address);
 
   // Check if valid address
   try {
-    userAddress = ethers.utils.getAddress(userAddress);
+    address = ethers.utils.getAddress(address);
   } catch (error) {
     console.log(error);
     return res.status(400).json({
@@ -151,7 +151,7 @@ exports.redeemReward = async (req, res, next) => {
   let hasNFT = false;
 
   let user = await Users.findOne(
-    { address: userAddress },
+    { address: address },
     { "boundedAddresses.address": 1 }
   );
 
@@ -200,7 +200,7 @@ exports.redeemReward = async (req, res, next) => {
   }
 
   // Check if user has already claimed reward
-  if (campaign.savedAddresses.includes(userAddress)) {
+  if (campaign.savedAddresses.includes(address)) {
     return res.status(400).json({
       message: "Reward already redeemed",
     });
@@ -208,7 +208,7 @@ exports.redeemReward = async (req, res, next) => {
 
   let code = reward.availableCodes[0];
   campaign.remaining -= 1;
-  campaign.claimedAddresses.push(userAddress);
+  campaign.claimedAddresses.push(address);
   await campaign.save();
 
   // Check if reward is started
@@ -259,17 +259,17 @@ exports.redeemReward = async (req, res, next) => {
  *   "message": "Reward not redeemed"
  * }
  * @return {DefaultErrorResponse} 400 - Bad request response
- * @example response - 400 - Invalid userAddress
+ * @example response - 400 - Invalid user address
  * {
  *   "message": "Invalid address"
  * }
  */
 exports.hasClaimed = async (req, res, next) => {
-  let { userAddress, campaignId } = req.query;
+  let { address, campaignId } = req.query;
 
   // Check if valid address
   try {
-    userAddress = ethers.utils.getAddress(userAddress);
+    address = ethers.utils.getAddress(address);
   } catch (error) {
     console.log(error);
     return res.status(400).json({
@@ -280,7 +280,7 @@ exports.hasClaimed = async (req, res, next) => {
   let campaign = await Campaign.findOne({ _id: campaignId });
 
   // Check if user has already claimed reward
-  if (campaign.savedAddresses.includes(userAddress)) {
+  if (campaign.savedAddresses.includes(address)) {
     return res.status(200).json({
       hasClaimed: true,
       message: "Reward already redeemed",
@@ -308,7 +308,7 @@ exports.hasClaimed = async (req, res, next) => {
  *   "rewards": []
  * }
  * @return {DefaultErrorResponse} 400 - Bad request response
- * @example response - 400 - Invalid userAddress
+ * @example response - 400 - Invalid address
  * {
  *   "message": "Invalid address"
  * }
