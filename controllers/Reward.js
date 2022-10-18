@@ -27,7 +27,7 @@ async function isHolder(chain, contractAddress, address) {
 }
 
 /**
- * GET /api/v1/rewards
+ * GET /api/v1/reward
  * @summary Get available rewards based on user and campaign Id
  * @description Get available rewards based on user and campaign Id
  * @tags Rewards
@@ -73,7 +73,7 @@ exports.getRewards = async (req, res, next) => {
 };
 
 /**
- * PUT /api/v1/redeem
+ * PUT /api/v1/reward/redeem
  * @summary Redeem reward
  * @description Redeem reward specified by campaign Id that belongs to userAddress, and returns a unique code
  * @tags Rewards
@@ -241,7 +241,7 @@ exports.redeemReward = async (req, res, next) => {
 // TODO: hasClaimed
 
 /**
- * GET /api/v1/rewards/hasClaimed
+ * GET /api/v1/reward/hasClaimed
  * @summary Check if user has claimed a reward for a campaignId
  * @description Check if user has claimed a reward for a campaignId
  * @tags Rewards
@@ -296,7 +296,7 @@ exports.hasClaimed = async (req, res, next) => {
 // TODO: userRewards
 
 /**
- * GET /api/v1/rewards/userRewards
+ * GET /api/v1/reward/userRewards
  * @summary View user's claimed rewards
  * @description View user's claimed rewards
  * @tags Rewards
