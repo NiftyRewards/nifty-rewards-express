@@ -31,8 +31,8 @@ async function isHolder(chain, contractAddress, address) {
  * @summary Get available rewards based on user and campaign Id
  * @description Get available rewards based on user and campaign Id
  * @tags Rewards
- * @param {string} address.required - Address of the account
- * @param {string} campaignId.required - Campaign Id to get rewards from
+ * @param {string} address.query.required - Address of the account
+ * @param {string} campaignId.query.required - Campaign Id to get rewards from
  * @return {object} 200 - Success Response - application/json
  * @example response - 200 - Successful Refresh of Cache
  * {
@@ -245,8 +245,8 @@ exports.redeemReward = async (req, res, next) => {
  * @summary Check if user has claimed a reward for a campaignId
  * @description Check if user has claimed a reward for a campaignId
  * @tags Rewards
- * @param {string} address.required - Address of the user account
- * @param {string} campaignId.required - Campaign Id to redeem rewards from
+ * @param {string} address.query.required - Address of the user account
+ * @param {string} campaignId.query.required - Campaign Id to redeem rewards from
  * @return {HasRedeemedResponse} 200 - Success Response - application/json
  * @example response - 200 - Return true if user has claimed reward
  * {
@@ -300,7 +300,7 @@ exports.hasClaimed = async (req, res, next) => {
  * @summary View user's claimed rewards
  * @description View user's claimed rewards
  * @tags Rewards
- * @param {string} address.required - Address of the user account
+ * @param {string} address.query.required - Address of the user account
  * @return {UserRewardsResponse} 200 - Success Response - application/json
  * @example response - 200 - Return list of user rewards
  * {
