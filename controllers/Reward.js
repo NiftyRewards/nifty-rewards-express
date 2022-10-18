@@ -314,11 +314,11 @@ exports.hasClaimed = async (req, res, next) => {
  * }
  */
 exports.userRewards = async (req, res, next) => {
-  let { userAddress } = req.body;
+  let { address } = req.body;
 
   // Check if valid address
   try {
-    userAddress = ethers.utils.getAddress(userAddress);
+    address = ethers.utils.getAddress(address);
   } catch (error) {
     console.log(error);
     return res.status(400).json({
@@ -326,10 +326,7 @@ exports.userRewards = async (req, res, next) => {
     });
   }
 
-  let user = await User.findOne(
-    { address: userAddress },
-    { claimedRewards: 1 }
-  );
+  let user = await User.findOne({ address: address }, { claimedRewards: 1 });
 
   if (!user) {
     return res.status(400).json({
@@ -337,7 +334,7 @@ exports.userRewards = async (req, res, next) => {
     });
   } else {
     return res.status(200).json({
-      address: userAddress,
+      address: address,
       rewards: user.claimedRewards,
     });
   }
