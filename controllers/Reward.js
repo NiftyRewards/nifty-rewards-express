@@ -265,7 +265,7 @@ exports.redeemReward = async (req, res, next) => {
  * }
  */
 exports.hasClaimed = async (req, res, next) => {
-  let { userAddress, campaignId } = req.body;
+  let { userAddress, campaignId } = req.query;
 
   // Check if valid address
   try {
