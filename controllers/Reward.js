@@ -241,7 +241,7 @@ exports.redeemReward = async (req, res, next) => {
 // TODO: hasClaimed
 
 /**
- * GET /api/v1/hasClaimed
+ * GET /api/v1/rewards/hasClaimed
  * @summary Check if user has claimed a reward for a campaignId
  * @description Check if user has claimed a reward for a campaignId
  * @tags Rewards
@@ -296,7 +296,7 @@ exports.hasClaimed = async (req, res, next) => {
 // TODO: userRewards
 
 /**
- * GET /api/v1/userRewards
+ * GET /api/v1/rewards/userRewards
  * @summary View user's claimed rewards
  * @description View user's claimed rewards
  * @tags Rewards
