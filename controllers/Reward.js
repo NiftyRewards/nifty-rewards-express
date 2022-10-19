@@ -208,8 +208,9 @@ exports.redeemReward = async (req, res, next) => {
   console.log("🚀 | exports.redeemReward= | campaign", campaign);
   // Check if user has already claimed reward
   if (campaign.claimedAddresses.includes(address)) {
-    return res.status(400).json({
+    return res.status(200).json({
       message: "Reward already redeemed",
+      code: code,
     });
   }
 
