@@ -300,7 +300,7 @@ exports.hasClaimed = async (req, res, next) => {
   let campaign = await Campaign.findOne({ _id: campaignId });
 
   // Check if user has already claimed reward
-  if (campaign.savedAddresses.includes(address)) {
+  if (campaign.claimedAddresses.includes(address)) {
     return res.status(200).json({
       hasClaimed: true,
       message: "Reward already redeemed",
