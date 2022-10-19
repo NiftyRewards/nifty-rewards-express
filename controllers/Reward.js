@@ -344,7 +344,10 @@ exports.userRewards = async (req, res, next) => {
     });
   } else {
     // Expand rewards
-    let rewards = await Reward.find({ _id: user.claimedRewards });
+    let rewards = await Reward.find(
+      { _id: user.claimedRewards },
+      { _id: 0, __v: 0 }
+    );
     console.log("🚀 | exports.userRewards= | rewards", rewards);
 
     return res.status(200).json({
