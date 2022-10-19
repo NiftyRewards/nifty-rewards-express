@@ -148,18 +148,10 @@ exports.redeemReward = async (req, res, next) => {
   } else {
     collectionIdentifiers = campaign.collectionIdentifiers;
   }
-  console.log(
-    "🚀 | exports.redeemReward= | collectionIdentifiers",
-    collectionIdentifiers
-  );
 
   collectionIdentifiers = collectionIdentifiers.map((collection) => {
     return collection.split("-");
   });
-  console.log(
-    "🚀 | collectionIdentifiers=collectionIdentifiers.map | collectionIdentifiers",
-    collectionIdentifiers
-  );
 
   let hasNFT = false;
 
@@ -176,11 +168,6 @@ exports.redeemReward = async (req, res, next) => {
 
   let boundedAddresses = user.boundedAddresses.map(
     (address) => address.address
-  );
-
-  console.log(
-    "🚀 | exports.redeemReward= | boundedAddresses",
-    boundedAddresses
   );
 
   for (let collection of collectionIdentifiers) {
