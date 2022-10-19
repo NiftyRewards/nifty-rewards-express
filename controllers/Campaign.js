@@ -145,7 +145,8 @@ exports.startCampaign = async (req, res, next) => {
   // No longer create rewards for individual tokens (FCFS)
   // Create Rewards (Multiple)
   let codes = [];
-  for (let i = 0; i < redemptionCount; i++) {
+  // Only Create 1 Code for now
+  for (let i = 0; i < 1; i++) {
     codes.push(randomstring.generate(6));
   }
   try {
