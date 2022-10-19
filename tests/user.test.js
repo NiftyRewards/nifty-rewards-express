@@ -78,7 +78,33 @@ describe("User", () => {
       `Address ${addressToBind} bound to ${address}`
     );
   });
+  // 0x5672C4871b615AA45B090a790646cfC8305beDdf
+  test("Bind Account", async () => {
+    const address = "0x5672C4871b615AA45B090a790646cfC8305beDdf";
 
+    const TEST_PRIVATE_KEY =
+      "0x0e6ed8cb707826b42f6cbf06ad38b14ecd8a2da9384f39f0d50cfff8b2ae9c3f"; // DO NOT USE IN PRODUCTION
+    const wallet = new ethers.Wallet(TEST_PRIVATE_KEY);
+
+    const addressToBind = wallet.address;
+    const chain = 1;
+
+    const message = `Bind Account ${addressToBind} on chainId ${chain} to ${address}`;
+    const signature = await wallet.signMessage(message);
+
+    const response = await request(app).post("/api/v1/user/bind").send({
+      address: address,
+      addressToBind: addressToBind,
+      chain: chain,
+      message: message,
+      signature: signature,
+    });
+
+    expect(response.status).toEqual(200);
+    expect(response._body.message).toEqual(
+      `Address ${addressToBind} bound to ${address}`
+    );
+  });
   //   test("Refresh NFTS", async () => {
   //     // Add Mock Account to address
   //     await UserModel.findOneAndUpdate(

@@ -39,7 +39,7 @@ async function main() {
     collectionAddresses: [TEST_CONTRACT_1, TEST_CONTRACT_2],
     chainIds: ["1", "1"],
     title: "NIKE",
-    description: "Mike Campaign",
+    description: "Nike Campaign",
     company: "Nike",
     companyLogoUrl:
       "https://static.nike.com/a/images/f_jpg,q_auto:eco/61b4738b-e1e1-4786-8f6c-26aa0008e80b/swoosh-logo-black.png",
@@ -48,7 +48,32 @@ async function main() {
     website: "www.nike.com",
     bgUrl:
       "https://static.nike.com/a/images/f_jpg,q_auto:eco/61b4738b-e1e1-4786-8f6c-26aa0008e80b/swoosh-logo-black.png",
-    offer: "10% Off footwear",
+    tnc: [
+      "Limited to 1 redemption per user. Limited redemptions available for the period",
+      "Promo is valid from now until 30th June 2022 or redemption lasts, whichever is sooner",
+      "Applicable only for in-store purchases",
+      "Other Nike T&Cs apply",
+    ],
+    location: "Singapore",
+    startDate: "2022-01-01",
+    endDate: "2022-12-01",
+    redemptionCount: "100",
+  });
+
+  const campaign2 = await instance.post("/api/v1/campaign/start", {
+    merchantAddress: MERCHANT_ADDRESS,
+    collectionAddresses: [TEST_CONTRACT_1, TEST_CONTRACT_2],
+    chainIds: ["1", "1"],
+    title: "ADIDAS",
+    description: "Adidas",
+    company: "Adidas",
+    companyLogoUrl:
+      "https://static.nike.com/a/images/f_jpg,q_auto:eco/61b4738b-e1e1-4786-8f6c-26aa0008e80b/swoosh-logo-black.png",
+    offer: "15% Off Bags",
+    description: "15% off when you purchase any footwear on adidas.com!",
+    website: "www.nike.com",
+    bgUrl:
+      "https://static.nike.com/a/images/f_jpg,q_auto:eco/61b4738b-e1e1-4786-8f6c-26aa0008e80b/swoosh-logo-black.png",
     tnc: [
       "Limited to 1 redemption per user. Limited redemptions available for the period",
       "Promo is valid from now until 30th June 2022 or redemption lasts, whichever is sooner",

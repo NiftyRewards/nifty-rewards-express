@@ -82,12 +82,12 @@ exports.getRewards = async (req, res, next) => {
  * @example request - User with NFT
  * {
  *  "address": "0x5672C4871b615AA45B090a790646cfC8305beDdf",
- *  "campaignId": "634edeb933c51b380a150014"
+ *  "campaignId": "63504aa76490bae392b255b7"
  * }
  * @example request - User without NFT
  * {
  *  "address": "0xE7B43e7cd453162E8c6f894b2a2Bc33d0521e3aa",
- *  "campaignId": "634edeb933c51b380a150014"
+ *  "campaignId": "63504aa76490bae392b255b7"
  * }
  * @example response - 200 - Successful Redemption of reward
  * {
@@ -155,10 +155,8 @@ exports.redeemReward = async (req, res, next) => {
 
   let hasNFT = false;
 
-  let user = await Users.findOne(
-    { address: address },
-    { "boundedAddresses.address": 1 }
-  );
+  let user = await Users.findOne({ address: address });
+  console.log("🚀 | exports.redeemReward= | user", user);
 
   if (!user) {
     return res.status(400).json({
@@ -205,7 +203,7 @@ exports.redeemReward = async (req, res, next) => {
     });
   }
 
-  console.log("🚀 | exports.redeemReward= | campaign", campaign);
+  let code = reward.availableCodes[0];
   // Check if user has already claimed reward
   if (campaign.claimedAddresses.includes(address)) {
     return res.status(200).json({
@@ -214,7 +212,6 @@ exports.redeemReward = async (req, res, next) => {
     });
   }
 
-  let code = reward.availableCodes[0];
   campaign.remaining -= 1;
   campaign.claimedAddresses.push(address);
   await campaign.save();
@@ -233,6 +230,7 @@ exports.redeemReward = async (req, res, next) => {
     });
   }
 
+  console.log("🚀 | exports.redeemReward= | user", user);
   // Redeem reward
   user.claimedRewards.push(reward);
   await user.save();
@@ -308,8 +306,12 @@ exports.hasClaimed = async (req, res, next) => {
  * @summary View user's claimed rewards
  * @description View user's claimed rewards
  * @tags Rewards
- * @param {string} address.query.required - Address of the user account
+ * @param {string} address.query.required - Address of the user account (e.g. 0x5672C4871b615AA45B090a790646cfC8305beDdf)
  * @return {UserRewardsResponse} 200 - Success Response - application/json
+ * @example request - User with NFT
+ * {
+ *  "address": "0x5672C4871b615AA45B090a790646cfC8305beDdf",
+ * }
  * @example response - 200 - Return list of user rewards
  * {
  *   "address": "0x1234567890ABCDEF",
@@ -341,9 +343,13 @@ exports.userRewards = async (req, res, next) => {
       message: "User not found",
     });
   } else {
+    // Expand rewards
+    let rewards = await Reward.find({ _id: user.claimedRewards });
+    console.log("🚀 | exports.userRewards= | rewards", rewards);
+
     return res.status(200).json({
       address: address,
-      rewards: user.claimedRewards,
+      rewards: rewards,
     });
   }
 };

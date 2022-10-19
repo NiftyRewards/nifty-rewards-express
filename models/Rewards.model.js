@@ -13,7 +13,7 @@ const mongoose = require("mongoose");
  * Redeem Reward Payload
  * @typedef {object} RedeemRewardPayload
  * @property {string} address.required - Address of the Merchant
- * @property {ObjectId} campaignId.required - Address of the Collections
+ * @property {string} campaignId.required - Address of the Collections
  */
 
 /**
