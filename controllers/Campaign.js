@@ -67,6 +67,9 @@ exports.startCampaign = async (req, res, next) => {
     endDate,
     affectedTokens,
     redemptionCount,
+    brandDescription,
+    header,
+    backdropUrl,
   } = req.body;
 
   if (!redemptionCount) {
@@ -118,6 +121,9 @@ exports.startCampaign = async (req, res, next) => {
       title: title,
       company: company,
       companyLogoUrl: companyLogoUrl,
+      brandDescription: brandDescription,
+      header: header,
+      backdropUrl: backdropUrl,
       offer: offer,
       bgUrl: bgUrl,
       location: location,
